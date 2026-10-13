@@ -44,6 +44,7 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 - **Clean-Counter** (Tage/Stunden/Minuten) mit sekündlichem Live-Tick und Fortschritt zum nächsten Meilenstein.
 - **8 Meilenstein-Badges** (24 h … 1 Jahr) – werden in `badge_user` mit Erreichungszeitpunkt gespeichert; nach einem Neustart (Rückfall) neu berechnet.
 - **Daily Check-in**: Stimmung 1–5, Trigger-Tags, optionale Notiz (verschlüsselt) – ein Check-in pro Tag, nachträglich bearbeitbar.
+- **Stimmungsverlauf** (`/verlauf`, 7/30/90 Tage): Balkendiagramm (serverseitiges SVG, mit Tabelle als Textalternative), Ø-Stimmung, häufigste Trigger mit Ø-Stimmung, Stimmung nach Wochentag, Neustarts als Markierung und behutsame Hinweise auf Muster (ab 5 Check-ins). Notizen werden dort nicht geladen. Lokal füllt `DemoCheckinSeeder` vier Wochen Beispieldaten für „Alex“.
 - **Anonyme Registrierung** mit Pseudonym und ausdrücklicher Einwilligung (Art. 9 DSGVO, Zeitpunkt wird gespeichert); Login per Benutzername (Rate-Limit: 5 Versuche).
 - **Passwort vergessen**: Reset-Link per E-Mail; die Antwort verrät nicht, ob eine Adresse registriert ist.
 - **Profil**: Pseudonym, Startdatum (nur zur Korrektur), Land (Österreich voreingestellt oder Deutschland – bestimmt die Hilfsnummern), Vertrauensperson (Name & Nummer verschlüsselt gespeichert).

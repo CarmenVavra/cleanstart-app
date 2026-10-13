@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CopingItemController;
 use App\Http\Controllers\LegalController;
+use App\Http\Controllers\MoodHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelapseController;
 use App\Livewire\Dashboard;
@@ -41,6 +42,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/neustart', [RelapseController::class, 'create'])->name('relapse.create');
     Route::post('/neustart', [RelapseController::class, 'store'])->name('relapse.store');
+
+    Route::get('/verlauf', [MoodHistoryController::class, 'index'])->name('mood.index');
 
     Route::get('/notfallplan', [CopingItemController::class, 'index'])->name('coping.index');
     Route::post('/notfallplan', [CopingItemController::class, 'store'])->name('coping.store');

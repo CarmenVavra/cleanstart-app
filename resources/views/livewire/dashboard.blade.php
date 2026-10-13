@@ -199,6 +199,10 @@
                     </div>
                 </div>
             @endif
+
+            <a href="{{ route('mood.index') }}" class="flex min-h-11 items-center gap-2 self-start text-base font-bold">
+                Mein Stimmungsverlauf <span aria-hidden="true">→</span>
+            </a>
         </x-card>
 
         <x-legal-links />

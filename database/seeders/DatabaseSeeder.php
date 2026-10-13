@@ -36,12 +36,13 @@ class DatabaseSeeder extends Seeder
 
             if ($user->wasRecentlyCreated) {
                 $this->seedDemoHistory($user);
+                $this->call(DemoCheckinSeeder::class);
             }
         }
     }
 
     /**
-     * Beispiel-Notfallplan und eine frühere Serie für das Demo-Konto.
+     * Beispiel-Notfallplan und eine frühere Serie für das Demo-Konto (Check-ins: DemoCheckinSeeder).
      */
     private function seedDemoHistory(User $user): void
     {
