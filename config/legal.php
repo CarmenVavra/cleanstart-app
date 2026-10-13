@@ -13,7 +13,8 @@
 return [
     'operator' => env('LEGAL_OPERATOR'),          // Name bzw. Firma des Betreibers
     'street' => env('LEGAL_STREET'),              // Straße und Hausnummer
-    'city' => env('LEGAL_CITY'),                  // PLZ und Ort
+    'zip' => env('LEGAL_ZIP'),                    // Postleitzahl
+    'city' => env('LEGAL_CITY'),                  // Ort
     'country' => env('LEGAL_COUNTRY'),            // Land
     'email' => env('LEGAL_EMAIL'),                // Kontakt-E-Mail
     'phone' => env('LEGAL_PHONE'),                // optional

@@ -15,6 +15,7 @@
         <address class="not-italic">
             <x-legal.value :value="$legal['operator']" env="LEGAL_OPERATOR" /><br>
             <x-legal.value :value="$legal['street']" env="LEGAL_STREET" /><br>
+            <x-legal.value :value="$legal['zip']" env="LEGAL_ZIP" />
             <x-legal.value :value="$legal['city']" env="LEGAL_CITY" /><br>
             E-Mail: <x-legal.value :value="$legal['email']" env="LEGAL_EMAIL" />
         </address>

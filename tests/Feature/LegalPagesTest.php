@@ -36,6 +36,18 @@ class LegalPagesTest extends TestCase
             ->assertDontSee('[LEGAL_OPERATOR in .env ergänzen]');
     }
 
+    public function test_postal_code_is_shown_before_the_city(): void
+    {
+        config(['legal.zip' => '1230', 'legal.city' => 'Wien']);
+
+        $this->get(route('legal.imprint'))->assertOk()->assertSeeInOrder(['1230', 'Wien']);
+        $this->get(route('legal.privacy'))->assertOk()->assertSeeInOrder(['1230', 'Wien']);
+
+        config(['legal.zip' => null]);
+
+        $this->get(route('legal.imprint'))->assertSee('[LEGAL_ZIP in .env ergänzen]');
+    }
+
     public function test_legal_links_appear_on_login_and_dashboard(): void
     {
         $this->get(route('login'))->assertSee(route('legal.imprint'), false)->assertSee(route('legal.privacy'), false);
