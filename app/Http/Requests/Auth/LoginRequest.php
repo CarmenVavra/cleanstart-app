@@ -74,8 +74,12 @@ class LoginRequest extends FormRequest
         ]);
     }
 
-    private function throttleKey(): string
+    /**
+     * Schlüssel für die Begrenzung der Login-Versuche – nur als Hash, damit Benutzername
+     * und IP-Adresse nicht im Klartext im Cache stehen.
+     */
+    public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('username')->toString()).'|'.$this->ip());
+        return 'login:'.hash('sha256', Str::transliterate(Str::lower($this->string('username')->toString()).'|'.$this->ip()));
     }
 }

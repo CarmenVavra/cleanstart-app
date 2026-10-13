@@ -56,7 +56,17 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 ## Vor dem Go-live
 
 - `LEGAL_*`-Werte in der `.env` ausfüllen (Betreiber, Adresse, E-Mail, Hoster, Aufsichtsbehörde). Fehlende Angaben erscheinen auf den Seiten als roter Platzhalter. Die Texte sind eine Vorlage und sollten rechtlich geprüft werden.
-- `MAIL_*` auf einen echten SMTP-Server umstellen; lokal landen Reset-Mails im Log (`storage/logs/laravel.log`).
+- `MAIL_*` auf einen echten SMTP-Server umstellen; lokal landen Reset-Mails im Log (`storage/logs/laravel.log`). Den Versanddienst in `LEGAL_MAIL_PROVIDER` eintragen, die Backup-Dauer des Hosters in `LEGAL_BACKUP_RETENTION_DAYS`.
+- Cronjob für den Scheduler einrichten: `* * * * * php artisan schedule:run` – er startet stündlich `cleanstart:prune` (löscht abgelaufene Sitzungen, Login-Zähler und Passwort-Links, wie in der Datenschutzerklärung zugesagt).
+- `SESSION_SECURE_COOKIE=true`, `LOG_LEVEL=error` und HTTPS-Weiterleitung auf dem Server setzen.
+
+### Datenschutz im Code
+
+- Sitzungen werden ohne IP-Adresse und User-Agent gespeichert (`app/Session/PrivacyDatabaseSessionHandler.php`).
+- Login-Versuche werden nur unter einem SHA-256-Hash aus Benutzername und IP gezählt.
+- „Angemeldet bleiben“ gilt 30 Tage (`AUTH_REMEMBER_MINUTES`).
+- SQLite läuft mit `PRAGMA secure_delete = ON`, gelöschte Inhalte werden in der Datei überschrieben.
+- `tests/Feature/PrivacyComplianceTest.php` prüft diese Zusagen der Datenschutzerklärung.
 
 ## Architektur
 

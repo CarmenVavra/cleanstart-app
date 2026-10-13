@@ -66,8 +66,8 @@
                     >
                     <span>
                         Ich habe die <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener" class="font-bold">Datenschutzerklärung</a>
-                        gelesen und willige ausdrücklich ein, dass meine Angaben zu Stimmung, Triggern und Abstinenz
-                        (Gesundheitsdaten) zur Nutzung von CleanStart verarbeitet werden. Ich kann die Einwilligung
+                        gelesen und willige ausdrücklich ein, dass meine Angaben zu Stimmung, Triggern, Abstinenz, Suchtdruck und
+                        früheren Ausgaben für die Sucht (Gesundheitsdaten) zur Nutzung von CleanStart verarbeitet werden. Ich kann die Einwilligung
                         jederzeit widerrufen, indem ich mein Konto lösche.
                     </span>
                 </label>

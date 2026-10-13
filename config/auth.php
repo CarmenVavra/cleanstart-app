@@ -41,6 +41,8 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+            // „Angemeldet bleiben“: Gültigkeit des Anmelde-Cookies in Minuten (30 Tage statt Laravel-Standard 400 Tage)
+            'remember' => (int) env('AUTH_REMEMBER_MINUTES', 43200),
         ],
     ],
 
