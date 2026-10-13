@@ -9,7 +9,13 @@
 const DAY_MS = 864e5;
 const HOUR_MS = 36e5;
 const MINUTE_MS = 6e4;
-const BREATH_PHASE_MS = 4000;
+/** 4-7-8-Atmung: Kreisgröße (scale) am Ende jeder Phase, Dauer in Sekunden. */
+const BREATH_PHASES = [
+    { label: 'Einatmen …', seconds: 4, scale: 1 },
+    { label: 'Halten …', seconds: 7, scale: 1 },
+    { label: 'Ausatmen …', seconds: 8, scale: 0.55 },
+];
+const BREATH_MIN_SCALE = 0.55;
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -20,7 +26,10 @@ export function dashboard(config) {
         now: Date.now(),
         sos: false,
         breathing: false,
-        phase: 0,
+        phaseIndex: 0,
+        remaining: 0,
+        circleScale: BREATH_MIN_SCALE,
+        circleDuration: 0,
         tickTimer: null,
         breathTimer: null,
 
@@ -113,20 +122,45 @@ export function dashboard(config) {
             this.stopBreathing();
             this.sos = false;
         },
+        get breathPhase() {
+            return BREATH_PHASES[this.phaseIndex].label;
+        },
         toggleBreath() {
             if (this.breathing) {
                 this.stopBreathing();
                 return;
             }
-            this.phase = 0;
+            this.circleScale = BREATH_MIN_SCALE;
+            this.circleDuration = 0;
             this.breathing = true;
-            this.breathTimer = setInterval(() => (this.phase = 1 - this.phase), BREATH_PHASE_MS);
+            this.enterBreathPhase(0);
+            this.breathTimer = setInterval(() => this.tickBreath(), 1000);
+        },
+        tickBreath() {
+            this.remaining -= 1;
+            if (this.remaining <= 0) {
+                this.enterBreathPhase((this.phaseIndex + 1) % BREATH_PHASES.length);
+            }
+        },
+        enterBreathPhase(index) {
+            const phase = BREATH_PHASES[index];
+            this.phaseIndex = index;
+            this.remaining = phase.seconds;
+            // Erst nach dem Rendern setzen, damit die CSS-Transition über die volle Phasendauer läuft.
+            requestAnimationFrame(() =>
+                requestAnimationFrame(() => {
+                    if (!this.breathing) return;
+                    this.circleDuration = phase.seconds;
+                    this.circleScale = phase.scale;
+                }),
+            );
         },
         stopBreathing() {
             clearInterval(this.breathTimer);
             this.breathTimer = null;
             this.breathing = false;
-            this.phase = 0;
+            this.phaseIndex = 0;
+            this.remaining = 0;
         },
     };
 }

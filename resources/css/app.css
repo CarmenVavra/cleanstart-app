@@ -42,7 +42,6 @@
     --shadow-sos: 0 10px 24px -10px rgba(194, 54, 43, 0.7);
 
     --animate-pulse-sos: cs-pulse 2.4s ease-out infinite;
-    --animate-breathe: cs-breathe 8s ease-in-out infinite;
 
     @keyframes cs-pulse {
         0% {
@@ -52,16 +51,6 @@
         100% {
             transform: scale(1.06, 1.45);
             opacity: 0;
-        }
-    }
-
-    @keyframes cs-breathe {
-        0%,
-        100% {
-            transform: scale(0.55);
-        }
-        50% {
-            transform: scale(1);
         }
     }
 }

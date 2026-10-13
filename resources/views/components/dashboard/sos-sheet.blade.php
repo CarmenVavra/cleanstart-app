@@ -56,19 +56,24 @@
             class="flex min-h-[72px] flex-col items-start justify-center gap-0.5 rounded-[18px] bg-sage-100 px-[18px] py-3.5 text-left text-ink"
         >
             <span class="text-[19px] font-bold" x-text="breathing ? 'Atemübung beenden' : 'Atemübung starten'">Atemübung starten</span>
-            <span class="text-[15px] text-ink-soft">Geführt, 4 Sekunden ein – 4 Sekunden aus</span>
+            <span class="text-[15px] text-ink-soft">Geführt: 4 s einatmen – 7 s halten – 8 s ausatmen</span>
         </button>
 
         <div id="breath-area">
             <template x-if="breathing">
                 <div class="flex flex-col items-center gap-3.5 pt-2 pb-1">
                     <div class="relative flex size-[180px] items-center justify-center">
-                        <div aria-hidden="true" class="absolute inset-0 animate-breathe rounded-full bg-[radial-gradient(circle,#B9D9CD_0%,#DCEBE5_70%)]"></div>
-                        <span
-                            aria-live="polite"
-                            class="relative text-[22px] font-bold text-sage-900"
-                            x-text="phase === 0 ? 'Einatmen …' : 'Ausatmen …'"
-                        ></span>
+                        {{-- Kreisgröße & Dauer kommen aus dem 4-7-8-Timer (resources/js/dashboard.js) --}}
+                        <div
+                            aria-hidden="true"
+                            class="absolute inset-0 rounded-full bg-[radial-gradient(circle,#B9D9CD_0%,#DCEBE5_70%)] transition-transform ease-in-out"
+                            style="transform: scale(.55)"
+                            x-bind:style="{ transform: `scale(${circleScale})`, transitionDuration: `${circleDuration}s` }"
+                        ></div>
+                        <div class="relative flex flex-col items-center gap-1 text-sage-900">
+                            <span aria-live="polite" class="text-[22px] font-bold" x-text="breathPhase"></span>
+                            <span aria-hidden="true" class="text-[30px] leading-none font-bold tabular-nums" x-text="remaining"></span>
+                        </div>
                     </div>
                 </div>
             </template>

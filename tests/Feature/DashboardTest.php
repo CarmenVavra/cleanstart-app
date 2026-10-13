@@ -63,6 +63,17 @@ class DashboardTest extends TestCase
             ->assertSee('Noch 19 Std. bis „24 Stunden“');
     }
 
+    public function test_emergency_sheet_offers_the_4_7_8_breathing_exercise(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard'))
+            ->assertSee('Atemübung starten')
+            ->assertSee('Geführt: 4 s einatmen – 7 s halten – 8 s ausatmen')
+            ->assertDontSee('4 Sekunden ein – 4 Sekunden aus');
+    }
+
     public function test_trusted_contact_is_offered_in_the_emergency_sheet(): void
     {
         $user = User::factory()->withTrustedContact('Sabine', '+49 170 1234567')->create();

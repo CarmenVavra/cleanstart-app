@@ -38,7 +38,7 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 
 ## Funktionen
 
-- **Notfall-Button** mit pulsierender Animation → Bottom-Sheet mit Telefonseelsorge, Vertrauensperson (aus dem Profil), geführter Atemübung und Notruf 112 (Fokus-Trap, Escape schließt).
+- **Notfall-Button** mit pulsierender Animation → Bottom-Sheet mit Telefonseelsorge, Vertrauensperson (aus dem Profil), geführter 4-7-8-Atemübung (4 s ein · 7 s halten · 8 s aus, mit Countdown) und Notruf 112 (Fokus-Trap, Escape schließt).
 - **Clean-Counter** (Tage/Stunden/Minuten) mit sekündlichem Live-Tick und Fortschritt zum nächsten Meilenstein.
 - **8 Meilenstein-Badges** (24 h … 1 Jahr) – werden in `badge_user` mit Erreichungszeitpunkt gespeichert; nach einem Neustart (Rückfall) neu berechnet.
 - **Daily Check-in**: Stimmung 1–5, Trigger-Tags, optionale Notiz (verschlüsselt) – ein Check-in pro Tag, nachträglich bearbeitbar.
