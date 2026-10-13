@@ -5,6 +5,9 @@
  * Nicht übersetzte Regeln fallen automatisch auf Englisch zurück.
  */
 return [
+    'accepted' => ':Attribute muss bestätigt werden.',
+    'after_or_equal' => ':Attribute muss am oder nach dem :date liegen.',
+    'current_password' => 'Das Passwort ist nicht korrekt.',
     'alpha_dash' => ':Attribute darf nur Buchstaben, Ziffern, Binde- und Unterstriche enthalten.',
     'array' => ':Attribute muss eine Liste sein.',
     'before_or_equal' => ':Attribute darf nicht in der Zukunft liegen.',

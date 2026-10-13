@@ -22,6 +22,17 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'sobriety_start_at' => ['required', 'date', 'before_or_equal:now'],
+            'privacy_consent' => ['accepted'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'privacy_consent.accepted' => 'Bitte bestätige die Datenschutzerklärung und deine Einwilligung.',
         ];
     }
 

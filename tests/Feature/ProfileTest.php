@@ -53,10 +53,13 @@ class ProfileTest extends TestCase
         $this->seed(BadgeSeeder::class);
         $user = User::factory()->create(['sobriety_start_at' => now()->subDays(40)]);
 
-        $this->actingAs($user)->put(route('profile.update'), [
-            'username' => $user->username,
-            'sobriety_start_at' => now()->subDays(4)->format('Y-m-d\TH:i'),
-        ]);
+        $this->actingAs($user)
+            ->put(route('profile.update'), [
+                'username' => $user->username,
+                'sobriety_start_at' => now()->subDays(4)->format('Y-m-d\TH:i'),
+            ])
+            ->assertSessionHasNoErrors()
+            ->assertRedirect(route('profile.edit'));
 
         $this->assertEqualsCanonicalizing([1, 3], $user->badges()->pluck('days_required')->all());
     }

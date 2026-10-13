@@ -25,13 +25,15 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'username' => fake()->unique()->userName(),
+            // Muss die Regel alpha_dash:ascii erfüllen (Faker-userName() enthält teils Punkte).
+            'username' => 'nutzer_'.fake()->unique()->numerify('######'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'sobriety_start_at' => now()->subDays(10),
             'trusted_contact_name' => null,
             'trusted_contact_phone' => null,
+            'privacy_accepted_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }

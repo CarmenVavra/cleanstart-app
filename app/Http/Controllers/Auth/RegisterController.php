@@ -21,7 +21,10 @@ class RegisterController extends Controller
 
     public function store(RegisterRequest $request): RedirectResponse
     {
-        $user = User::create($request->validated());
+        $user = User::create([
+            ...$request->safe()->except('privacy_consent'),
+            'privacy_accepted_at' => now(),
+        ]);
 
         event(new Registered($user));
 

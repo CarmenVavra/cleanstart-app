@@ -1,4 +1,4 @@
-@props(['user'])
+@props(['user', 'reasons', 'strategies'])
 
 {{-- Notfall-Sheet (Bottom-Sheet-Dialog) mit Hotline, Vertrauensperson und geführter Atemübung --}}
 <div
@@ -78,6 +78,36 @@
                 </div>
             </template>
         </div>
+
+        {{-- Persönlicher Notfallplan --}}
+        @if ($reasons->isNotEmpty())
+            <section aria-labelledby="sos-why-h" class="flex flex-col gap-2 rounded-[18px] bg-surface px-[18px] py-3.5">
+                <h3 id="sos-why-h" class="text-[17px] font-bold">Dein Warum</h3>
+                <ul class="flex flex-col gap-1.5 text-base">
+                    @foreach ($reasons as $reason)
+                        <li class="flex gap-2"><span aria-hidden="true" class="text-sos">♥</span><span>{{ $reason->content }}</span></li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
+
+        @if ($strategies->isNotEmpty())
+            <section aria-labelledby="sos-help-h" class="flex flex-col gap-2 rounded-[18px] bg-surface px-[18px] py-3.5">
+                <h3 id="sos-help-h" class="text-[17px] font-bold">Was dir jetzt helfen kann</h3>
+                <ul class="flex flex-col gap-1.5 text-base">
+                    @foreach ($strategies as $strategy)
+                        <li class="flex gap-2"><span aria-hidden="true" class="font-bold text-sage-600">✓</span><span>{{ $strategy->content }}</span></li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
+
+        @if ($reasons->isEmpty() && $strategies->isEmpty())
+            <a href="{{ route('coping.index') }}" class="flex min-h-11 flex-col justify-center rounded-[18px] border-2 border-dashed border-line px-[18px] py-3 text-ink no-underline hover:text-ink">
+                <span class="text-base font-bold">Notfallplan anlegen</span>
+                <span class="text-sm text-ink-muted">Schreib auf, wofür du kämpfst und was dir hilft.</span>
+            </a>
+        @endif
 
         <p class="text-[15px]/[1.45] text-ink-muted">
             Bei akuter Gefahr für dich oder andere:

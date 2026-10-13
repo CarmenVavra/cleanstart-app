@@ -22,6 +22,7 @@ class RegistrationTest extends TestCase
             'password' => 'geheim1234',
             'password_confirmation' => 'geheim1234',
             'sobriety_start_at' => now()->subDays(3)->format('Y-m-d\TH:i'),
+            'privacy_consent' => '1',
         ], $overrides);
     }
 
@@ -42,6 +43,19 @@ class RegistrationTest extends TestCase
         $user = User::firstWhere('username', 'Leuchtturm');
         $this->assertNotNull($user);
         $this->assertSame(3, (int) round($user->cleanDays()));
+        $this->assertNotNull($user->privacy_accepted_at);
+    }
+
+    public function test_explicit_privacy_consent_is_required(): void
+    {
+        $payload = $this->validPayload();
+        unset($payload['privacy_consent']);
+
+        $this->post(route('register.store'), $payload)
+            ->assertSessionHasErrors(['privacy_consent' => 'Bitte bestätige die Datenschutzerklärung und deine Einwilligung.']);
+
+        $this->assertGuest();
+        $this->assertSame(0, User::count());
     }
 
     public function test_sobriety_start_must_not_be_in_the_future(): void

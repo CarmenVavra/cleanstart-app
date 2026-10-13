@@ -44,6 +44,29 @@
                 required
             />
 
+            <div class="flex flex-col gap-1.5">
+                <label class="flex items-start gap-3 text-[15px]/[1.45]">
+                    <input
+                        type="checkbox"
+                        name="privacy_consent"
+                        value="1"
+                        required
+                        class="mt-0.5 size-5 flex-none accent-sage-900"
+                        @checked(old('privacy_consent'))
+                        @error('privacy_consent') aria-invalid="true" aria-describedby="privacy_consent-error" @enderror
+                    >
+                    <span>
+                        Ich habe die <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener" class="font-bold">Datenschutzerklärung</a>
+                        gelesen und willige ausdrücklich ein, dass meine Angaben zu Stimmung, Triggern und Abstinenz
+                        (Gesundheitsdaten) zur Nutzung von CleanStart verarbeitet werden. Ich kann die Einwilligung
+                        jederzeit widerrufen, indem ich mein Konto lösche.
+                    </span>
+                </label>
+                @error('privacy_consent')
+                    <p id="privacy_consent-error" class="text-sm font-bold text-sos">{{ $message }}</p>
+                @enderror
+            </div>
+
             <x-button>Konto erstellen</x-button>
         </form>
     </x-card>

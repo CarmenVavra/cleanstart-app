@@ -1,4 +1,4 @@
-@props(['progress', 'startLabel'])
+@props(['progress', 'startLabel', 'longestPreviousStreak' => null])
 
 {{-- Clean-Counter: serverseitig vorgerendert, danach tickt Alpine (`dashboard`) sekündlich weiter --}}
 <section aria-labelledby="counter-h" class="flex flex-col gap-[18px] rounded-[28px] bg-sage-900 px-[22px] pt-6 pb-[22px] text-sage-50">
@@ -45,4 +45,10 @@
         </div>
         <p class="text-[15px] text-sage-150" x-text="nextText">{{ $progress->nextText() }}</p>
     </div>
+
+    @if ($longestPreviousStreak !== null)
+        <p class="border-t border-white/14 pt-3 text-sm text-sage-200">
+            Bisher längste Serie: {{ $longestPreviousStreak }} {{ $longestPreviousStreak === 1 ? 'Tag' : 'Tage' }}
+        </p>
+    @endif
 </section>

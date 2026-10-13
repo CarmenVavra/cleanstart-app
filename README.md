@@ -42,8 +42,18 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 - **Clean-Counter** (Tage/Stunden/Minuten) mit sekündlichem Live-Tick und Fortschritt zum nächsten Meilenstein.
 - **8 Meilenstein-Badges** (24 h … 1 Jahr) – werden in `badge_user` mit Erreichungszeitpunkt gespeichert; nach einem Neustart (Rückfall) neu berechnet.
 - **Daily Check-in**: Stimmung 1–5, Trigger-Tags, optionale Notiz (verschlüsselt) – ein Check-in pro Tag, nachträglich bearbeitbar.
-- **Anonyme Registrierung** mit Pseudonym; Login per Benutzername (Rate-Limit: 5 Versuche).
-- **Profil**: Pseudonym, Startdatum, Vertrauensperson (Name & Nummer verschlüsselt gespeichert).
+- **Anonyme Registrierung** mit Pseudonym und ausdrücklicher Einwilligung (Art. 9 DSGVO, Zeitpunkt wird gespeichert); Login per Benutzername (Rate-Limit: 5 Versuche).
+- **Passwort vergessen**: Reset-Link per E-Mail; die Antwort verrät nicht, ob eine Adresse registriert ist.
+- **Profil**: Pseudonym, Startdatum (nur zur Korrektur), Vertrauensperson (Name & Nummer verschlüsselt gespeichert).
+- **Neu starten** (`/neustart`): Nach einem Rückfall wird die bisherige Serie mit optionaler, verschlüsselter Reflexion und Triggern archiviert; „Bisher längste Serie“ erscheint auf dem Dashboard, alle Serien im Profil.
+- **Mein Notfallplan** (`/notfallplan`): „Mein Warum“ und „Was mir hilft“ (je max. 10, verschlüsselt) – wird direkt im Notfall-Sheet angezeigt.
+- **Datenexport** (Art. 20 DSGVO) als JSON und **Konto löschen** (Art. 17 DSGVO, mit Passwort-Bestätigung) im Profil.
+- **Impressum & Datenschutzerklärung** (`/impressum`, `/datenschutz`), öffentlich erreichbar und überall verlinkt.
+
+## Vor dem Go-live
+
+- `LEGAL_*`-Werte in der `.env` ausfüllen (Betreiber, Adresse, E-Mail, Hoster, Aufsichtsbehörde). Fehlende Angaben erscheinen auf den Seiten als roter Platzhalter. Die Texte sind eine Vorlage und sollten rechtlich geprüft werden.
+- `MAIL_*` auf einen echten SMTP-Server umstellen; lokal landen Reset-Mails im Log (`storage/logs/laravel.log`).
 
 ## Architektur
 
@@ -52,7 +62,8 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 | Dashboard (Livewire) | `app/Livewire/Dashboard.php`, `app/Livewire/Forms/CheckinForm.php`, `resources/views/livewire/dashboard.blade.php` |
 | UI-Bausteine | `resources/views/components/dashboard/*.blade.php` |
 | Clientseitige Logik | `resources/js/dashboard.js` (Alpine: Counter, Sheet, Atemübung, Check-in-UI) |
-| Geschäftslogik | `app/Services/SobrietyProgress.php`, `app/Actions/SaveDailyCheckin.php`, `app/Actions/SyncUnlockedBadges.php` |
+| Geschäftslogik | `app/Services/SobrietyProgress.php`, `app/Actions/*` (Check-in, Abzeichen, Neustart, Export, Kontolöschung) |
+| Rechtliches | `config/legal.php`, `resources/views/legal/*.blade.php` |
 | Validierung | `app/Http/Requests/**` (Form Requests), `CheckinForm::rules()` |
 | Design-Tokens | `resources/css/app.css` (`@theme`) |
 

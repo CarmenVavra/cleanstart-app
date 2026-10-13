@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Actions\SaveDailyCheckin;
 use App\Actions\SyncUnlockedBadges;
+use App\Enums\CopingType;
 use App\Enums\Mood;
 use App\Enums\Trigger;
 use App\Livewire\Forms\CheckinForm;
@@ -28,9 +29,15 @@ class Dashboard extends Component
 
     public bool $saved = false;
 
+    /** Einmalige Rückmeldung nach einer Weiterleitung (z. B. nach einem Neustart). */
+    public ?string $flash = null;
+
     public function mount(SyncUnlockedBadges $syncUnlockedBadges): void
     {
         $user = $this->user();
+
+        $status = session('status');
+        $this->flash = is_string($status) ? $status : null;
 
         $syncUnlockedBadges->handle($user);
 
@@ -75,6 +82,11 @@ class Dashboard extends Component
         $startLabel = 'seit '.$user->sobriety_start_at->translatedFormat('j. F Y');
         $selectedMood = $this->form->selectedMood();
         $savedSummary = $this->savedSummary();
+        $longestPreviousStreak = $user->longestPreviousStreakDays();
+
+        $copingItems = $user->copingItems()->orderBy('id')->get();
+        $reasons = $copingItems->where('type', CopingType::Reason)->values();
+        $strategies = $copingItems->where('type', CopingType::Strategy)->values();
 
         return view('livewire.dashboard', compact(
             'user',
@@ -87,6 +99,9 @@ class Dashboard extends Component
             'startLabel',
             'selectedMood',
             'savedSummary',
+            'longestPreviousStreak',
+            'reasons',
+            'strategies',
         ));
     }
 

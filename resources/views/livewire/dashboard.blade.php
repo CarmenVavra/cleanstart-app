@@ -17,9 +17,11 @@
             >{{ $user->initial() }}</a>
         </header>
 
+        <x-status :message="$flash" />
+
         <div wire:ignore class="contents">
             <x-dashboard.emergency-button />
-            <x-dashboard.counter-card :progress="$progress" :start-label="$startLabel" />
+            <x-dashboard.counter-card :progress="$progress" :start-label="$startLabel" :longest-previous-streak="$longestPreviousStreak" />
             <x-dashboard.milestones-card :badges="$badges" :progress="$progress" />
         </div>
 
@@ -196,9 +198,11 @@
                 </div>
             @endif
         </x-card>
+
+        <x-legal-links />
     </main>
 
     <div wire:ignore>
-        <x-dashboard.sos-sheet :user="$user" />
+        <x-dashboard.sos-sheet :user="$user" :reasons="$reasons" :strategies="$strategies" />
     </div>
 </div>

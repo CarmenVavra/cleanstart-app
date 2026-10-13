@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $sobriety_start_at
  * @property string|null $trusted_contact_name
  * @property string|null $trusted_contact_phone
+ * @property Carbon|null $privacy_accepted_at
  */
 class User extends Authenticatable
 {
@@ -35,6 +36,7 @@ class User extends Authenticatable
         'sobriety_start_at',
         'trusted_contact_name',
         'trusted_contact_phone',
+        'privacy_accepted_at',
     ];
 
     /**
@@ -62,6 +64,7 @@ class User extends Authenticatable
             'sobriety_start_at' => 'datetime',
             'trusted_contact_name' => 'encrypted',
             'trusted_contact_phone' => 'encrypted',
+            'privacy_accepted_at' => 'datetime',
         ];
     }
 
@@ -79,6 +82,40 @@ class User extends Authenticatable
     public function badges(): BelongsToMany
     {
         return $this->belongsToMany(Badge::class)->withPivot('unlocked_at');
+    }
+
+    /**
+     * Abgeschlossene Clean-Serien (vor einem Neustart).
+     *
+     * @return HasMany<SobrietyPeriod, $this>
+     */
+    public function sobrietyPeriods(): HasMany
+    {
+        return $this->hasMany(SobrietyPeriod::class);
+    }
+
+    /**
+     * Einträge des persönlichen Notfallplans.
+     *
+     * @return HasMany<CopingItem, $this>
+     */
+    public function copingItems(): HasMany
+    {
+        return $this->hasMany(CopingItem::class);
+    }
+
+    /**
+     * Längste abgeschlossene Serie in vollen Tagen (null, wenn es noch keinen Neustart gab).
+     */
+    public function longestPreviousStreakDays(): ?int
+    {
+        $periods = $this->sobrietyPeriods()->get(['started_at', 'ended_at']);
+
+        if ($periods->isEmpty()) {
+            return null;
+        }
+
+        return (int) $periods->max(fn (SobrietyPeriod $period) => $period->days());
     }
 
     /**
