@@ -1,4 +1,4 @@
-@props(['progress', 'startLabel', 'longestPreviousStreak' => null])
+@props(['progress', 'startLabel', 'longestPreviousStreak' => null, 'cravingsOvercome' => 0])
 
 {{-- Clean-Counter: serverseitig vorgerendert, danach tickt Alpine (`dashboard`) sekündlich weiter --}}
 <section aria-labelledby="counter-h" class="flex flex-col gap-[18px] rounded-[28px] bg-sage-900 px-[22px] pt-6 pb-[22px] text-sage-50">
@@ -51,4 +51,13 @@
             Bisher längste Serie: {{ $longestPreviousStreak }} {{ $longestPreviousStreak === 1 ? 'Tag' : 'Tage' }}
         </p>
     @endif
+
+    {{-- Zähler wird nach dem Speichern im Craving-Timer clientseitig aktualisiert --}}
+    <p
+        x-show="cravingsOvercome > 0"
+        class="border-t border-white/14 pt-3 text-sm text-sage-200"
+        @if ($cravingsOvercome === 0) style="display: none" @endif
+    >
+        Suchtdruck überstanden: <strong class="text-sage-50" x-text="cravingsOvercomeLabel">{{ $cravingsOvercome }}-mal</strong>
+    </p>
 </section>

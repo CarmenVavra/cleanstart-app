@@ -1,4 +1,4 @@
-<div x-data="dashboard(@js($progress->clientConfig()))" x-on:keydown.escape.window="if (sos) closeSos()">
+<div x-data="dashboard(@js($clientConfig))" x-on:keydown.escape.window="if (sos) closeSos()">
     <main id="main" class="mx-auto flex min-h-screen max-w-[440px] flex-col gap-5 px-5 pt-5 pb-10">
 
         {{-- Kopfzeile --}}
@@ -21,7 +21,8 @@
 
         <div wire:ignore class="contents">
             <x-dashboard.emergency-button />
-            <x-dashboard.counter-card :progress="$progress" :start-label="$startLabel" :longest-previous-streak="$longestPreviousStreak" />
+            <x-dashboard.craving-banner />
+            <x-dashboard.counter-card :progress="$progress" :start-label="$startLabel" :longest-previous-streak="$longestPreviousStreak" :cravings-overcome="$cravingsOvercome" />
             <x-dashboard.milestones-card :badges="$badges" :progress="$progress" />
         </div>
 

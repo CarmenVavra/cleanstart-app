@@ -1,6 +1,6 @@
 @props(['user', 'reasons', 'strategies'])
 
-{{-- Notfall-Sheet (Bottom-Sheet-Dialog) mit Hotline, Vertrauensperson und geführter Atemübung --}}
+{{-- Notfall-Sheet (Bottom-Sheet-Dialog) mit Hotline, Vertrauensperson, geführter Atemübung und Craving-Timer --}}
 <div
     x-show="sos"
     x-cloak
@@ -75,6 +75,86 @@
                             <span aria-hidden="true" class="text-[30px] leading-none font-bold tabular-nums" x-text="remaining"></span>
                         </div>
                     </div>
+                </div>
+            </template>
+        </div>
+
+        {{-- Craving-Timer: Suchtdruck kommt in Wellen und flacht nach ca. 15 Minuten ab --}}
+        <button
+            type="button"
+            x-on:click="toggleCraving()"
+            x-bind:aria-expanded="cravingActive.toString()"
+            aria-expanded="false"
+            aria-controls="craving-area"
+            class="flex min-h-[72px] flex-col items-start justify-center gap-0.5 rounded-[18px] bg-sage-100 px-[18px] py-3.5 text-left text-ink"
+        >
+            <span class="text-[19px] font-bold" x-text="cravingButtonLabel">Suchtdruck-Timer starten</span>
+            <span class="text-[15px] text-ink-soft" x-text="cravingButtonHint">{{ \App\Models\CravingEpisode::TIMER_MINUTES }} Minuten – die Welle geht vorbei</span>
+        </button>
+
+        <div id="craving-area">
+            <template x-if="cravingState === 'running'">
+                <div class="flex flex-col items-center gap-3.5 pt-2 pb-1">
+                    <div class="relative flex size-[180px] items-center justify-center">
+                        <svg aria-hidden="true" viewBox="0 0 180 180" class="absolute inset-0 -rotate-90">
+                            <circle cx="90" cy="90" r="80" fill="none" stroke-width="12" class="stroke-sage-100" />
+                            <circle
+                                cx="90" cy="90" r="80" fill="none" stroke-width="12" stroke-linecap="round"
+                                class="stroke-sage-600 transition-[stroke-dashoffset] duration-1000 ease-linear"
+                                x-bind:stroke-dasharray="cravingRingLength"
+                                x-bind:stroke-dashoffset="cravingRingOffset"
+                            />
+                        </svg>
+                        <div class="relative flex flex-col items-center gap-1 text-sage-900">
+                            <span aria-hidden="true" class="text-[34px] leading-none font-bold tabular-nums" x-text="cravingClock"></span>
+                            <span aria-hidden="true" class="text-sm text-ink-soft">verbleibend</span>
+                            <span role="timer" class="sr-only" x-text="cravingTimerLabel"></span>
+                        </div>
+                    </div>
+                    <p aria-live="polite" class="text-center text-base/[1.45] text-ink-soft" x-text="cravingMessage"></p>
+                </div>
+            </template>
+
+            <template x-if="cravingState === 'done'">
+                <div role="status" class="flex flex-col gap-3 rounded-[18px] bg-sage-100 p-[18px]">
+                    <strong class="text-lg">Geschafft – die Welle ist vorbei.</strong>
+                    <p class="text-[15px]/[1.45] text-ink-soft">Hast du dem Suchtdruck standgehalten?</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            type="button"
+                            x-on:click="saveCraving()"
+                            x-bind:disabled="cravingSaving"
+                            class="min-h-12 flex-1 rounded-xl bg-sage-900 px-4 text-base font-bold text-white disabled:opacity-70"
+                        >Ja, überstanden</button>
+                        <button
+                            type="button"
+                            x-on:click="declineCraving()"
+                            class="min-h-12 flex-1 rounded-xl border-2 border-sage-600 bg-transparent px-4 text-base font-bold text-sage-900"
+                        >Diesmal nicht</button>
+                    </div>
+                    <p x-show="cravingError" role="alert" class="text-sm font-bold text-sos">
+                        Das hat leider nicht geklappt. Bitte versuch es noch einmal.
+                    </p>
+                </div>
+            </template>
+
+            <template x-if="cravingState === 'saved'">
+                <div role="status" class="flex flex-col gap-1.5 rounded-[18px] bg-sage-100 p-[18px]">
+                    <strong class="text-lg">Stark! Du bist der Welle nicht gefolgt.</strong>
+                    <p class="text-[15px]/[1.45] text-ink-soft">
+                        Du hast Suchtdruck schon <strong x-text="cravingsOvercomeLabel"></strong> überstanden. Jedes Mal wird es ein Stück leichter.
+                    </p>
+                </div>
+            </template>
+
+            <template x-if="cravingState === 'declined'">
+                <div role="status" class="flex flex-col gap-1.5 rounded-[18px] bg-surface p-[18px]">
+                    <strong class="text-lg">Danke für deine Ehrlichkeit.</strong>
+                    <p class="text-[15px]/[1.45] text-ink-soft">
+                        Ein Rückfall löscht nicht, was du geschafft hast. Wenn du magst, starte deinen Zähler neu –
+                        deine bisherige Serie bleibt gespeichert.
+                    </p>
+                    <a href="{{ route('relapse.create') }}" class="flex min-h-11 items-center self-start text-base font-bold">Neu starten</a>
                 </div>
             </template>
         </div>

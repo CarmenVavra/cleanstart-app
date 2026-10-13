@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Actions\RecordOvercomeCraving;
 use App\Actions\SaveDailyCheckin;
 use App\Actions\SyncUnlockedBadges;
 use App\Enums\CopingType;
@@ -9,10 +10,12 @@ use App\Enums\Mood;
 use App\Enums\Trigger;
 use App\Livewire\Forms\CheckinForm;
 use App\Models\Badge;
+use App\Models\CravingEpisode;
 use App\Models\User;
 use App\Services\SobrietyProgress;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Renderless;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -69,6 +72,18 @@ class Dashboard extends Component
         $this->saved = false;
     }
 
+    /**
+     * Speichert einen mit dem Craving-Timer überstandenen Suchtdruck.
+     * Das Notfall-Sheet ist clientseitig (wire:ignore), daher kein Re-Render nötig.
+     *
+     * @return int Anzahl aller überstandenen Suchtdruck-Momente
+     */
+    #[Renderless]
+    public function recordCraving(RecordOvercomeCraving $recordOvercomeCraving): int
+    {
+        return $recordOvercomeCraving->handle($this->user());
+    }
+
     public function render(): View
     {
         $user = $this->user();
@@ -88,8 +103,18 @@ class Dashboard extends Component
         $reasons = $copingItems->where('type', CopingType::Reason)->values();
         $strategies = $copingItems->where('type', CopingType::Strategy)->values();
 
+        $cravingsOvercome = $user->cravingEpisodes()->count();
+        $clientConfig = [
+            ...$progress->clientConfig(),
+            'cravingMinutes' => CravingEpisode::TIMER_MINUTES,
+            'cravingsOvercome' => $cravingsOvercome,
+            'cravingStorageKey' => 'cleanstart.craving.'.$user->id,
+        ];
+
         return view('livewire.dashboard', compact(
             'user',
+            'clientConfig',
+            'cravingsOvercome',
             'badges',
             'progress',
             'moods',

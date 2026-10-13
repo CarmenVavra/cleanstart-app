@@ -23,6 +23,7 @@
             <li><strong>Konto:</strong> Pseudonym, E-Mail-Adresse (nur für Anmeldung und Passwort-Zurücksetzen), Passwort (nur als sicherer Hash), Land (für die passenden Hilfsnummern), Zeitpunkt deiner Einwilligung.</li>
             <li><strong>Abstinenz:</strong> Startzeitpunkt deiner aktuellen Serie, frühere Serien und – freiwillig – deine Reflexion und Trigger bei einem Neustart.</li>
             <li><strong>Daily Check-in:</strong> Stimmung (1–5), ausgewählte Trigger und optional eine persönliche Notiz.</li>
+            <li><strong>Craving-Timer:</strong> der Zeitpunkt, wenn du einen überstandenen Suchtdruck speicherst. Ein laufender Timer wird nur in deinem Browser-Tab (sessionStorage) vermerkt, damit er beim Neuladen weiterläuft.</li>
             <li><strong>Notfallplan & Vertrauensperson:</strong> deine Einträge sowie Name und Telefonnummer einer Vertrauensperson, falls du sie angibst.</li>
             <li><strong>Technisch notwendig:</strong> ein Sitzungs-Cookie und ein Sicherheits-Token (CSRF), damit die Anmeldung funktioniert. Es werden keine Marketing- oder Analyse-Cookies gesetzt.</li>
         </ul>

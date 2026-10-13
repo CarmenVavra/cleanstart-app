@@ -1,7 +1,8 @@
 /**
  * Alpine-Komponenten des CleanStart-Dashboards.
  *
- * - `dashboard`: Live-Counter, Meilensteine, Begrüßung, Notfall-Sheet und Atemübung (rein clientseitig).
+ * - `dashboard`: Live-Counter, Meilensteine, Begrüßung, Notfall-Sheet, Atemübung und Craving-Timer
+ *                (clientseitig; nur ein überstandener Suchtdruck wird per $wire.recordCraving() gespeichert).
  * - `checkin`:   UI-Zustand des Daily Check-ins; Stimmung und Trigger sind per $wire.entangle
  *                mit der Livewire-Komponente synchronisiert und werden beim Speichern übertragen.
  */
@@ -17,7 +18,44 @@ const BREATH_PHASES = [
 ];
 const BREATH_MIN_SCALE = 0.55;
 
+/** Umfang des Fortschrittsrings im Craving-Timer (r = 80). */
+const CRAVING_RING_LENGTH = 2 * Math.PI * 80;
+/** Ein abgelaufener Timer wird nach dieser Zeit nicht mehr wiederhergestellt. */
+const CRAVING_RESTORE_MS = 2 * HOUR_MS;
+/** Begleittexte, gestaffelt nach Anteil der verstrichenen Zeit. */
+const CRAVING_MESSAGES = [
+    { from: 0, text: 'Suchtdruck ist wie eine Welle: Er steigt an, erreicht einen Höhepunkt – und ebbt wieder ab.' },
+    { from: 0.2, text: 'Du musst nichts tun außer abwarten. Beobachte das Gefühl, ohne ihm zu folgen.' },
+    { from: 0.45, text: 'Der Höhepunkt ist oft schon vorbei. Mit jeder Minute wird die Welle kleiner.' },
+    { from: 0.75, text: 'Fast geschafft. Du reitest die Welle – sie reißt dich nicht mit.' },
+];
+
 const pad = (n) => String(n).padStart(2, '0');
+
+/** sessionStorage kann (z. B. im privaten Modus) fehlen oder Fehler werfen. */
+const session = {
+    get(key) {
+        try {
+            return window.sessionStorage.getItem(key);
+        } catch {
+            return null;
+        }
+    },
+    set(key, value) {
+        try {
+            window.sessionStorage.setItem(key, value);
+        } catch {
+            // Timer läuft dann nur bis zum Neuladen der Seite.
+        }
+    },
+    remove(key) {
+        try {
+            window.sessionStorage.removeItem(key);
+        } catch {
+            // ignorieren
+        }
+    },
+};
 
 export function dashboard(config) {
     return {
@@ -32,9 +70,20 @@ export function dashboard(config) {
         circleDuration: 0,
         tickTimer: null,
         breathTimer: null,
+        cravingMinutes: config.cravingMinutes,
+        cravingsOvercome: config.cravingsOvercome,
+        cravingStorageKey: config.cravingStorageKey,
+        cravingState: 'idle', // idle | running | done | saved | declined
+        cravingEndsAt: null,
+        cravingSaving: false,
+        cravingError: false,
 
         init() {
-            this.tickTimer = setInterval(() => (this.now = Date.now()), 1000);
+            this.restoreCraving();
+            this.tickTimer = setInterval(() => {
+                this.now = Date.now();
+                this.checkCraving();
+            }, 1000);
         },
 
         destroy() {
@@ -120,6 +169,10 @@ export function dashboard(config) {
         },
         closeSos() {
             this.stopBreathing();
+            // Ein laufender oder noch unbeantworteter Timer bleibt erhalten (Hinweis auf dem Dashboard).
+            if (this.cravingState === 'saved' || this.cravingState === 'declined') {
+                this.resetCraving();
+            }
             this.sos = false;
         },
         get breathPhase() {
@@ -161,6 +214,104 @@ export function dashboard(config) {
             this.breathing = false;
             this.phaseIndex = 0;
             this.remaining = 0;
+        },
+
+        // --- Craving-Timer ---------------------------------------------------
+        // Läuft über einen Endzeitpunkt weiter, auch wenn das Sheet geschlossen oder die Seite neu geladen wird.
+        get cravingActive() {
+            return this.cravingState !== 'idle';
+        },
+        get cravingTotalMs() {
+            return this.cravingMinutes * MINUTE_MS;
+        },
+        get cravingRemainingMs() {
+            return this.cravingEndsAt === null ? 0 : Math.max(0, this.cravingEndsAt - this.now);
+        },
+        get cravingClock() {
+            const seconds = Math.ceil(this.cravingRemainingMs / 1000);
+            return `${pad(Math.floor(seconds / 60))}:${pad(seconds % 60)}`;
+        },
+        get cravingTimerLabel() {
+            const minutes = Math.ceil(this.cravingRemainingMs / MINUTE_MS);
+            return `Noch ${minutes} ${minutes === 1 ? 'Minute' : 'Minuten'}`;
+        },
+        get cravingElapsedShare() {
+            return 1 - this.cravingRemainingMs / this.cravingTotalMs;
+        },
+        get cravingRingLength() {
+            return CRAVING_RING_LENGTH;
+        },
+        get cravingRingOffset() {
+            return CRAVING_RING_LENGTH * (1 - this.cravingElapsedShare);
+        },
+        get cravingMessage() {
+            const share = this.cravingElapsedShare;
+            return CRAVING_MESSAGES.filter((m) => share >= m.from).at(-1).text;
+        },
+        get cravingButtonLabel() {
+            if (this.cravingState === 'idle') return 'Suchtdruck-Timer starten';
+            if (this.cravingState === 'running') return 'Timer abbrechen';
+            return 'Timer schließen';
+        },
+        get cravingButtonHint() {
+            if (this.cravingState === 'running') return `Noch ${this.cravingClock} – du schaffst das`;
+            return `${this.cravingMinutes} Minuten – die Welle geht vorbei`;
+        },
+        get cravingsOvercomeLabel() {
+            return `${this.cravingsOvercome}-mal`;
+        },
+        toggleCraving() {
+            if (this.cravingState === 'idle') {
+                this.startCraving();
+                return;
+            }
+            this.resetCraving();
+        },
+        startCraving() {
+            this.now = Date.now();
+            this.cravingEndsAt = this.now + this.cravingTotalMs;
+            this.cravingState = 'running';
+            this.cravingError = false;
+            session.set(this.cravingStorageKey, String(this.cravingEndsAt));
+        },
+        checkCraving() {
+            if (this.cravingState === 'running' && this.cravingRemainingMs <= 0) {
+                this.cravingState = 'done';
+                navigator.vibrate?.(300);
+            }
+        },
+        restoreCraving() {
+            const endsAt = Number(session.get(this.cravingStorageKey));
+            if (!endsAt || Date.now() - endsAt > CRAVING_RESTORE_MS) {
+                session.remove(this.cravingStorageKey);
+                return;
+            }
+            this.cravingEndsAt = endsAt;
+            this.cravingState = 'running';
+            this.checkCraving();
+        },
+        async saveCraving() {
+            this.cravingSaving = true;
+            this.cravingError = false;
+            try {
+                this.cravingsOvercome = await this.$wire.recordCraving();
+                this.cravingState = 'saved';
+                session.remove(this.cravingStorageKey);
+            } catch {
+                this.cravingError = true;
+            } finally {
+                this.cravingSaving = false;
+            }
+        },
+        declineCraving() {
+            this.cravingState = 'declined';
+            session.remove(this.cravingStorageKey);
+        },
+        resetCraving() {
+            this.cravingState = 'idle';
+            this.cravingEndsAt = null;
+            this.cravingError = false;
+            session.remove(this.cravingStorageKey);
         },
     };
 }

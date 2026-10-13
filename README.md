@@ -39,6 +39,7 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 ## Funktionen
 
 - **Notfall-Button** mit pulsierender Animation → Bottom-Sheet mit Telefonseelsorge des gewählten Landes (AT: 142 · DE: 0800 111 0 111), Vertrauensperson (aus dem Profil), geführter 4-7-8-Atemübung (4 s ein · 7 s halten · 8 s aus, mit Countdown) und Notruf 112 (Fokus-Trap, Escape schließt).
+- **Craving-Timer** im Notfall-Sheet: 15 Minuten „Welle aussitzen“ mit Fortschrittsring und begleitenden Texten. Läuft weiter, wenn das Sheet geschlossen oder die Seite neu geladen wird (Hinweis auf dem Dashboard). Am Ende: „Überstanden“ wird gespeichert und auf dem Clean-Counter gezählt, „Diesmal nicht“ führt behutsam zu „Neu starten“.
 - **Clean-Counter** (Tage/Stunden/Minuten) mit sekündlichem Live-Tick und Fortschritt zum nächsten Meilenstein.
 - **8 Meilenstein-Badges** (24 h … 1 Jahr) – werden in `badge_user` mit Erreichungszeitpunkt gespeichert; nach einem Neustart (Rückfall) neu berechnet.
 - **Daily Check-in**: Stimmung 1–5, Trigger-Tags, optionale Notiz (verschlüsselt) – ein Check-in pro Tag, nachträglich bearbeitbar.

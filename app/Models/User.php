@@ -118,6 +118,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Mit dem Craving-Timer überstandener Suchtdruck.
+     *
+     * @return HasMany<CravingEpisode, $this>
+     */
+    public function cravingEpisodes(): HasMany
+    {
+        return $this->hasMany(CravingEpisode::class);
+    }
+
+    /**
      * Längste abgeschlossene Serie in vollen Tagen (null, wenn es noch keinen Neustart gab).
      */
     public function longestPreviousStreakDays(): ?int

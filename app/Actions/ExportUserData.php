@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\Badge;
 use App\Models\CopingItem;
+use App\Models\CravingEpisode;
 use App\Models\DailyCheckin;
 use App\Models\SobrietyPeriod;
 use App\Models\User;
@@ -23,6 +24,7 @@ class ExportUserData
             'dailyCheckins' => fn ($query) => $query->orderBy('checkin_date'),
             'sobrietyPeriods' => fn ($query) => $query->orderBy('started_at'),
             'copingItems' => fn ($query) => $query->orderBy('id'),
+            'cravingEpisodes' => fn ($query) => $query->orderBy('overcome_at'),
             'badges' => fn ($query) => $query->orderBy('days_required'),
         ]);
 
@@ -58,6 +60,9 @@ class ExportUserData
                 'type' => $item->type->label(),
                 'content' => $item->content,
             ])->all(),
+            'overcome_cravings' => $user->cravingEpisodes
+                ->map(fn (CravingEpisode $episode) => $episode->overcome_at->toIso8601String())
+                ->all(),
             'unlocked_badges' => $user->badges->map(fn (Badge $badge) => [
                 'title' => $badge->title,
                 'unlocked_at' => $badge->getRelationValue('pivot')?->getAttribute('unlocked_at'),
