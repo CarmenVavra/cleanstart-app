@@ -1,0 +1,105 @@
+@import '@fontsource/atkinson-hyperlegible/400.css';
+@import '@fontsource/atkinson-hyperlegible/700.css';
+@import 'tailwindcss';
+
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* Design-Tokens laut Design-Handoff (UI_MOCKUPS/design_handoff_cleanstart_dashboard/README.md) */
+@theme {
+    --font-sans: 'Atkinson Hyperlegible', system-ui, sans-serif;
+
+    --color-page: #e9f0ee;
+    --color-surface: #f4f7f6;
+    --color-locked: #eef1f0;
+    --color-disabled: #d5ddda;
+
+    --color-ink: #1e2b2a;
+    --color-ink-muted: #4d5f5c;
+    --color-ink-soft: #33504a;
+    --color-ink-locked: #5e6e6b;
+
+    --color-sage-900: #23463d;
+    --color-sage-600: #3f7d6b;
+    --color-sage-300: #9ccbb9;
+    --color-sage-200: #b9d9cd;
+    --color-sage-150: #d6ebe3;
+    --color-sage-100: #dcebe5;
+    --color-sage-50: #f2f7f5;
+
+    --color-ocean-700: #2f6487;
+    --color-ocean-100: #dde8f1;
+
+    --color-sos: #c2362b;
+    --color-sos-hover: #ad2e24;
+
+    --color-line: #cbd8d4;
+    --color-line-soft: #d3ddda;
+    --color-line-dashed: #aebbb8;
+
+    --shadow-card: 0 1px 2px rgba(30, 43, 42, 0.06);
+    --shadow-sos: 0 10px 24px -10px rgba(194, 54, 43, 0.7);
+
+    --animate-pulse-sos: cs-pulse 2.4s ease-out infinite;
+    --animate-breathe: cs-breathe 8s ease-in-out infinite;
+
+    @keyframes cs-pulse {
+        0% {
+            transform: scale(1, 1);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(1.06, 1.45);
+            opacity: 0;
+        }
+    }
+
+    @keyframes cs-breathe {
+        0%,
+        100% {
+            transform: scale(0.55);
+        }
+        50% {
+            transform: scale(1);
+        }
+    }
+}
+
+@layer base {
+    body {
+        -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+        color: var(--color-ocean-700);
+    }
+
+    a:hover {
+        color: var(--color-sage-900);
+    }
+
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    /* Einheitlicher, gut sichtbarer Fokus-Stil */
+    :focus-visible {
+        outline: 3px solid var(--color-ocean-700);
+        outline-offset: 3px;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E9F0EE;font-family:'Atkinson Hyperlegible',system-ui,sans-serif;color:#1E2B2A;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#2F6487}a:hover{color:#23463D}
+button{font-family:inherit}
+@keyframes cs-pulse{0%{transform:scale(1,1);opacity:.5}100%{transform:scale(1.06,1.45);opacity:0}}
+@keyframes cs-breathe{0%,100%{transform:scale(.55)}50%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<main style="max-width:440px;margin:0 auto;padding:20px 20px 40px;display:flex;flex-direction:column;gap:20px;min-height:100vh">
+
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:4px">
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:.04em;color:#3F7D6B">
+        <span style="width:10px;height:10px;border-radius:50%;background:#3F7D6B"></span>CleanStart
+      </div>
+      <h1 style="margin:0;font-size:24px;line-height:1.2;font-weight:700">{{ greeting }}, Alex</h1>
+      <p style="margin:0;font-size:15px;color:#4D5F5C">{{ todayLabel }}</p>
+    </div>
+    <button aria-label="Profil öffnen" style="width:48px;height:48px;border-radius:50%;border:2px solid #CBD8D4;background:#FFFFFF;font-size:18px;font-weight:700;color:#23463D;cursor:pointer;flex:none" style-focus="outline:3px solid #2F6487;outline-offset:3px">A</button>
+  </header>
+
+  <div style="position:relative;margin-top:4px">
+    {{ pulseRings }}
+    <button onClick="{{ openSos }}" aria-haspopup="dialog" aria-label="Notfall – sofort Hilfe holen" style="position:relative;z-index:1;width:100%;min-height:96px;border:none;border-radius:24px;background:#C2362B;color:#FFFFFF;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:16px;padding:16px 20px;box-shadow:0 10px 24px -10px rgba(194,54,43,.7)" style-hover="background:#AD2E24" style-active="transform:scale(.98)" style-focus="outline:4px solid #1E2B2A;outline-offset:4px">
+      <span aria-hidden="true" style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;flex:none">!</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+        <span style="font-size:30px;font-weight:700;letter-spacing:.08em;line-height:1">NOTFALL</span>
+        <span style="font-size:16px;opacity:.95">Sofort Hilfe holen</span>
+      </span>
+    </button>
+  </div>
+
+  <section aria-labelledby="counter-h" style="background:#23463D;color:#F2F7F5;border-radius:28px;padding:24px 22px 22px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+      <h2 id="counter-h" style="margin:0;font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#B9D9CD">Clean seit</h2>
+      <span style="font-size:14px;color:#B9D9CD">{{ startLabel }}</span>
+    </div>
+    <div aria-label="{{ counterAria }}" style="display:flex;align-items:baseline;gap:10px">
+      <span style="font-size:84px;line-height:.9;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em">{{ days }}</span>
+      <span style="font-size:24px;font-weight:700;color:#D6EBE3">{{ daysWord }}</span>
+    </div>
+    <div aria-hidden="true" style="display:flex;gap:10px">
+      <div style="flex:1;background:rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1">{{ hours }}</span>
+        <span style="font-size:14px;color:#B9D9CD">Stunden</span>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1">{{ minutes }}</span>
+        <span style="font-size:14px;color:#B9D9CD">Minuten</span>
+      </div>
+      <sc-if value="{{ showSeconds }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;background:rgba(255,255,255,.08);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1">{{ seconds }}</span>
+          <span style="font-size:14px;color:#B9D9CD">Sekunden</span>
+        </div>
+      </sc-if>
+    </div>
+    <sc-if value="{{ hasNext }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ nextPct }}" aria-label="Fortschritt bis zum nächsten Meilenstein" style="height:10px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden">
+          <div style="height:100%;width:{{ nextPctCss }};background:#9CCBB9;border-radius:999px"></div>
+        </div>
+        <p style="margin:0;font-size:15px;color:#D6EBE3">{{ nextText }}</p>
+      </div>
+    </sc-if>
+  </section>
+
+  <section aria-labelledby="ms-h" style="background:#FFFFFF;border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;gap:18px;box-shadow:0 1px 2px rgba(30,43,42,.06)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+      <h2 id="ms-h" style="margin:0;font-size:19px;font-weight:700">Erreichte Meilensteine</h2>
+      <span style="font-size:15px;color:#4D5F5C">{{ unlockedCount }} von {{ totalCount }}</span>
+    </div>
+    <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px 8px">
+      <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="8">
+        <li aria-label="{{ m.aria }}" style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <sc-if value="{{ m.unlocked }}" hint-placeholder-val="{{ true }}">
+            <div aria-hidden="true" style="width:64px;height:64px;border-radius:50%;background:{{ m.color }};color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;box-shadow:0 0 0 4px {{ m.halo }}">{{ m.short }}</div>
+          </sc-if>
+          <sc-if value="{{ m.locked }}" hint-placeholder-val="{{ false }}">
+            <div aria-hidden="true" style="position:relative;width:64px;height:64px;border-radius:50%;background:#EEF1F0;border:2px dashed #AEBBB8;color:#5E6E6B;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700">
+              {{ m.short }}
+              <span style="position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:#5E6E6B;border:2px solid #FFFFFF;display:flex;align-items:center;justify-content:center">
+                <svg width="10" height="12" viewBox="0 0 10 12"><path d="M2.5 5V3.5a2.5 2.5 0 0 1 5 0V5" fill="none" stroke="#FFFFFF" stroke-width="1.6"></path><rect x="1" y="5" width="8" height="6.5" rx="1.5" fill="#FFFFFF"></rect></svg>
+              </span>
+            </div>
+          </sc-if>
+          <span style="font-size:14px;line-height:1.2;color:{{ m.labelColor }}">{{ m.label }}</span>
+        </li>
+      </sc-for>
+    </ul>
+  </section>
+
+  <section aria-labelledby="ci-h" style="background:#FFFFFF;border-radius:24px;padding:22px 20px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 2px rgba(30,43,42,.06)">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3F7D6B">Daily Check-in</span>
+      <h2 id="ci-h" style="margin:0;font-size:22px;font-weight:700">Wie geht es dir heute?</h2>
+    </div>
+
+    <sc-if value="{{ notSaved }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div role="radiogroup" aria-labelledby="ci-h" style="display:flex;gap:6px">
+          <sc-for list="{{ moods }}" as="md" hint-placeholder-count="5">
+            <button role="radio" aria-checked="{{ md.sel }}" aria-label="{{ md.label }}" onClick="{{ md.select }}" style="flex:1;min-width:0;min-height:84px;border-radius:18px;border:2px solid {{ md.border }};background:{{ md.bg }};cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:8px 2px;color:#1E2B2A;transition:background .15s,border-color .15s" style-focus="outline:3px solid #2F6487;outline-offset:2px">
+              <span aria-hidden="true" style="font-size:30px;line-height:1;filter:{{ md.filter }}">{{ md.emoji }}</span>
+              <span style="font-size:13px;line-height:1.15;font-weight:{{ md.weight }}">{{ md.short }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <h3 id="tr-h" style="margin:0;font-size:17px;font-weight:700">Was beeinflusst dich gerade?</h3>
+            <span style="font-size:14px;color:#4D5F5C">Optional · mehrere möglich</span>
+          </div>
+          <div role="group" aria-labelledby="tr-h" style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ triggers }}" as="t" hint-placeholder-count="8">
+              <button aria-pressed="{{ t.sel }}" onClick="{{ t.toggle }}" style="min-height:48px;padding:0 18px;border-radius:999px;border:2px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};font-size:16px;font-weight:{{ t.weight }};cursor:pointer;display:flex;align-items:center;gap:6px" style-focus="outline:3px solid #2F6487;outline-offset:2px">
+                <sc-if value="{{ t.sel }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true">✓</span></sc-if>{{ t.label }}
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button onClick="{{ save }}" aria-disabled="{{ saveDisabled }}" style="width:100%;min-height:56px;border:none;border-radius:16px;background:{{ saveBg }};color:{{ saveColor }};font-size:18px;font-weight:700;cursor:{{ saveCursor }}" style-focus="outline:3px solid #2F6487;outline-offset:3px">Check-in speichern</button>
+          <p aria-live="polite" style="margin:0;font-size:14px;color:#4D5F5C;text-align:center;min-height:18px">{{ saveHint }}</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="background:#DCEBE5;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span aria-hidden="true" style="font-size:36px;line-height:1">{{ savedEmoji }}</span>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <strong style="font-size:18px">Danke, gespeichert.</strong>
+            <span style="font-size:15px;color:#33504A">Stimmung: {{ savedMood }}</span>
+          </div>
+        </div>
+        <p style="margin:0;font-size:15px;line-height:1.45;color:#33504A">{{ savedTriggers }}</p>
+        <button onClick="{{ edit }}" style="align-self:flex-start;min-height:44px;padding:0 18px;border-radius:12px;border:2px solid #3F7D6B;background:transparent;color:#23463D;font-size:16px;font-weight:700;cursor:pointer" style-focus="outline:3px solid #2F6487;outline-offset:2px">Bearbeiten</button>
+      </div>
+    </sc-if>
+  </section>
+</main>
+
+<sc-if value="{{ sos }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSos }}" style="position:fixed;inset:0;background:rgba(20,32,30,.6);display:flex;align-items:flex-end;justify-content:center;z-index:50">
+    <div role="dialog" aria-modal="true" aria-labelledby="sos-h" onClick="{{ stop }}" style="width:100%;max-width:440px;max-height:92vh;overflow:auto;background:#FFFFFF;border-radius:28px 28px 0 0;padding:12px 20px 28px;display:flex;flex-direction:column;gap:16px">
+      <div aria-hidden="true" style="width:44px;height:5px;border-radius:999px;background:#CBD8D4;align-self:center"></div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="sos-h" style="margin:0;font-size:26px;font-weight:700">Du bist nicht allein.</h2>
+        <p style="margin:0;font-size:17px;line-height:1.45;color:#4D5F5C">Atme einmal tief durch. Wähle, was dir jetzt am meisten hilft.</p>
+      </div>
+
+      <a href="tel:08001110111" style="text-decoration:none;min-height:72px;border-radius:18px;background:#2F6487;color:#FFFFFF;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px" style-focus="outline:3px solid #1E2B2A;outline-offset:3px">
+        <span style="font-size:19px;font-weight:700">Telefonseelsorge anrufen</span>
+        <span style="font-size:15px;opacity:.95">0800 111 0 111 · kostenlos, rund um die Uhr</span>
+      </a>
+      <a href="tel:+491701234567" style="text-decoration:none;min-height:72px;border-radius:18px;background:#DDE8F1;color:#1E2B2A;padding:14px 18px;display:flex;flex-direction:column;justify-content:center;gap:2px" style-focus="outline:3px solid #2F6487;outline-offset:3px">
+        <span style="font-size:19px;font-weight:700">Sabine anrufen</span>
+        <span style="font-size:15px;color:#33504A">Deine Vertrauensperson</span>
+      </a>
+      <button onClick="{{ toggleBreath }}" aria-expanded="{{ breathing }}" style="min-height:72px;border-radius:18px;border:none;background:#DCEBE5;color:#1E2B2A;padding:14px 18px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;cursor:pointer;text-align:left" style-focus="outline:3px solid #2F6487;outline-offset:3px">
+        <span style="font-size:19px;font-weight:700">{{ breathBtn }}</span>
+        <span style="font-size:15px;color:#33504A">Geführt, 4 Sekunden ein – 4 Sekunden aus</span>
+      </button>
+
+      <sc-if value="{{ breathing }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 0 4px">
+          <div style="position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center">
+            {{ breathCircle }}
+            <span aria-live="polite" style="position:relative;font-size:22px;font-weight:700;color:#23463D">{{ breathPhase }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <p style="margin:0;font-size:15px;line-height:1.45;color:#4D5F5C">Bei akuter Gefahr für dich oder andere: <a href="tel:112" style="font-weight:700;color:#C2362B">Notruf 112</a></p>
+      <button onClick="{{ closeSos }}" style="min-height:52px;border-radius:14px;border:2px solid #CBD8D4;background:#FFFFFF;color:#1E2B2A;font-size:17px;font-weight:700;cursor:pointer" style-focus="outline:3px solid #2F6487;outline-offset:3px">Schließen</button>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startDate&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2026-08-29T08:00&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Counter&quot;},&quot;showSeconds&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Counter&quot;},&quot;pulse&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Notfall-Button&quot;}}">
+class Component extends DCLogic {
+  state = { now: Date.now(), mood: null, triggers: [], saved: false, sos: false, breathing: false, phase: 0, breathKey: 0, tried: false };
+  componentDidMount() {
+    this.tick = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    this.onKey = e => { if (e.key === 'Escape' && this.state.sos) this.closeSos(); };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick); clearInterval(this.bt);
+    window.removeEventListener('keydown', this.onKey);
+  }
+  closeSos = () => { clearInterval(this.bt); this.setState({ sos: false, breathing: false }); };
+  toggleBreath = () => {
+    clearInterval(this.bt);
+    if (this.state.breathing) return this.setState({ breathing: false });
+    this.setState({ breathing: true, phase: 0, breathKey: Date.now() });
+    this.bt = setInterval(() => this.setState(s => ({ phase: 1 - s.phase })), 4000);
+  };
+  renderVals() {
+    const s = this.state, p = this.props;
+    const start = new Date(p.startDate ?? '2026-08-29T08:00');
+    const valid = !isNaN(start);
+    const diff = valid ? Math.max(0, s.now - start.getTime()) : 0;
+    const days = Math.floor(diff / 864e5);
+    const hours = Math.floor(diff / 36e5) % 24;
+    const minutes = Math.floor(diff / 6e4) % 60;
+    const seconds = Math.floor(diff / 1e3) % 60;
+    const pad = n => String(n).padStart(2, '0');
+    const fracDays = diff / 864e5;
+
+    const defs = [
+      [1, '24h', '24 Stunden', 165], [3, '3', '3 Tage', 190], [7, '7', '1 Woche', 215], [14, '14', '2 Wochen', 240],
+      [30, '30', '30 Tage', 275], [90, '90', '90 Tage', 310], [180, '½J', '6 Monate', 30], [365, '1J', '1 Jahr', 70]
+    ];
+    const milestones = defs.map(([d, short, label, h]) => {
+      const unlocked = fracDays >= d;
+      return { short, label, unlocked, locked: !unlocked,
+        color: `oklch(0.5 0.09 ${h})`, halo: `oklch(0.93 0.03 ${h})`,
+        labelColor: unlocked ? '#1E2B2A' : '#5E6E6B',
+        aria: `${label} – ${unlocked ? 'erreicht' : 'noch gesperrt'}` };
+    });
+    const nextIdx = defs.findIndex(([d]) => fracDays < d);
+    const hasNext = nextIdx >= 0;
+    let nextPct = 100, nextText = '';
+    if (hasNext) {
+      const prev = nextIdx > 0 ? defs[nextIdx - 1][0] : 0, nd = defs[nextIdx][0];
+      nextPct = Math.round(((fracDays - prev) / (nd - prev)) * 100);
+      const left = Math.ceil(nd - fracDays);
+      nextText = left <= 1 && nd === 1 ? `Noch ${24 - Math.floor(fracDays * 24)} Std. bis „${defs[nextIdx][2]}“` : `Noch ${left} ${left === 1 ? 'Tag' : 'Tage'} bis „${defs[nextIdx][2]}“`;
+    }
+
+    const moodDefs = [[1, '😣', 'Sehr schlecht', 'Sehr<br>schlecht'], [2, '😕', 'Schlecht'], [3, '😐', 'Okay'], [4, '🙂', 'Gut'], [5, '😄', 'Sehr gut']];
+    const moods = moodDefs.map(([v, emoji, label]) => {
+      const sel = s.mood === v, dim = s.mood !== null && !sel;
+      return { emoji, label, short: label, sel,
+        bg: sel ? '#DCEBE5' : '#F4F7F6', border: sel ? '#3F7D6B' : 'transparent',
+        weight: sel ? 700 : 400, filter: dim ? 'grayscale(.6) opacity(.7)' : 'none',
+        select: () => this.setState({ mood: v, tried: false }) };
+    });
+    const trigDefs = ['Stress', 'Einsamkeit', 'Müdigkeit', 'Langeweile', 'Wut', 'Hunger', 'Suchtdruck', 'Soziale Situation'];
+    const triggers = trigDefs.map(label => {
+      const sel = s.triggers.includes(label);
+      return { label, sel,
+        bg: sel ? '#2F6487' : '#F4F7F6', border: sel ? '#2F6487' : '#D3DDDA', color: sel ? '#FFFFFF' : '#1E2B2A', weight: sel ? 700 : 400,
+        toggle: () => this.setState(st => ({ triggers: st.triggers.includes(label) ? st.triggers.filter(x => x !== label) : [...st.triggers, label] })) };
+    });
+    const m = moodDefs.find(x => x[0] === s.mood);
+
+    const hr = new Date(s.now).getHours();
+    const pulseOn = p.pulse ?? true;
+    const ring = delay => React.createElement('span', { key: delay, 'aria-hidden': true, style: {
+      position: 'absolute', inset: 0, borderRadius: 24, background: '#C2362B', zIndex: 0, pointerEvents: 'none',
+      animation: `cs-pulse 2.4s ease-out ${delay}s infinite` } });
+
+    return {
+      greeting: hr < 11 ? 'Guten Morgen' : hr < 18 ? 'Guten Tag' : 'Guten Abend',
+      todayLabel: new Date(s.now).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }),
+      startLabel: valid ? 'seit ' + start.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Startdatum ungültig',
+      days, daysWord: days === 1 ? 'Tag' : 'Tage', hours: pad(hours), minutes: pad(minutes), seconds: pad(seconds),
+      counterAria: `${days} Tage, ${hours} Stunden und ${minutes} Minuten clean`,
+      showSeconds: p.showSeconds ?? false,
+      hasNext, nextPct, nextPctCss: Math.max(3, nextPct) + '%', nextText,
+      milestones, unlockedCount: milestones.filter(x => x.unlocked).length, totalCount: milestones.length,
+      moods, triggers,
+      notSaved: !s.saved, saved: s.saved,
+      saveDisabled: s.mood === null,
+      saveBg: s.mood === null ? '#D5DDDA' : '#23463D', saveColor: s.mood === null ? '#4D5F5C' : '#FFFFFF', saveCursor: s.mood === null ? 'not-allowed' : 'pointer',
+      saveHint: s.mood === null ? (s.tried ? 'Bitte wähle zuerst deine Stimmung.' : 'Dauert nur ein paar Sekunden.') : '',
+      save: () => s.mood === null ? this.setState({ tried: true }) : this.setState({ saved: true }),
+      edit: () => this.setState({ saved: false }),
+      savedEmoji: m ? m[1] : '', savedMood: m ? m[2] : '',
+      savedTriggers: s.triggers.length ? 'Notiert: ' + s.triggers.join(', ') + '. Gut, dass du hinschaust.' : 'Keine Trigger notiert. Schön, dass du dir Zeit genommen hast.',
+      pulseRings: pulseOn ? [ring(0), ring(1.2)] : null,
+      sos: s.sos,
+      openSos: () => this.setState({ sos: true }),
+      closeSos: this.closeSos,
+      stop: e => e.stopPropagation(),
+      breathing: s.breathing,
+      toggleBreath: this.toggleBreath,
+      breathBtn: s.breathing ? 'Atemübung beenden' : 'Atemübung starten',
+      breathPhase: s.phase === 0 ? 'Einatmen …' : 'Ausatmen …',
+      breathCircle: React.createElement('div', { key: s.breathKey, 'aria-hidden': true, style: {
+        position: 'absolute', inset: 0, borderRadius: '50%', background: 'radial-gradient(circle, #B9D9CD 0%, #DCEBE5 70%)',
+        animation: 'cs-breathe 8s ease-in-out infinite' } })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('badges', function (Blueprint $table) {
+            $table->id();
+            $table->string('title'); // z. B. "1 Woche"
+            $table->string('icon_slug')->unique(); // CSS-/Icon-Kennung, z. B. "badge-7d"
+            $table->string('short_label', 8); // Text im Badge-Kreis, z. B. "7"
+            $table->unsignedSmallInteger('hue'); // OKLCH-Farbton des Badges
+            $table->unsignedSmallInteger('days_required');
+            $table->timestamps();
+        });
+
+        Schema::create('badge_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('badge_id')->constrained()->cascadeOnDelete();
+            $table->timestamp('unlocked_at');
+
+            $table->unique(['user_id', 'badge_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('badge_user');
+        Schema::dropIfExists('badges');
+    }
+};
