@@ -23,6 +23,7 @@
             <x-dashboard.emergency-button />
             <x-dashboard.craving-banner />
             <x-dashboard.counter-card :progress="$progress" :start-label="$startLabel" :longest-previous-streak="$longestPreviousStreak" :cravings-overcome="$cravingsOvercome" />
+            <x-dashboard.savings-card :saved-label="$savedLabel" :summary="$savingsSummary" />
             <x-dashboard.milestones-card :badges="$badges" :progress="$progress" />
         </div>
 

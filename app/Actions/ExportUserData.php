@@ -42,6 +42,10 @@ class ExportUserData
                 'name' => $user->trusted_contact_name,
                 'phone' => $user->trusted_contact_phone,
             ],
+            'savings_calculator' => [
+                'previous_spending_eur' => $user->spendingCents() === null ? null : $user->spendingCents() / 100,
+                'period' => $user->spending_period?->label(),
+            ],
             'daily_checkins' => $user->dailyCheckins->map(fn (DailyCheckin $checkin) => [
                 'date' => $checkin->checkin_date->toDateString(),
                 'mood_rating' => $checkin->mood_rating->value,

@@ -6,6 +6,7 @@ use App\Actions\DeleteAccount;
 use App\Actions\ExportUserData;
 use App\Actions\SyncUnlockedBadges;
 use App\Enums\Country;
+use App\Enums\SpendingPeriod;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
@@ -24,8 +25,12 @@ class ProfileController extends Controller
 
         $periods = $user->sobrietyPeriods()->latest('ended_at')->get();
         $countries = Country::options();
+        $spendingPeriods = SpendingPeriod::options();
+        $spendingCents = $user->spendingCents();
+        $spendingAmount = $spendingCents === null ? null : number_format($spendingCents / 100, 2, ',', '');
+        $spendingPeriod = ($user->spending_period ?? SpendingPeriod::Week)->value;
 
-        return view('profile.edit', compact('user', 'periods', 'countries'));
+        return view('profile.edit', compact('user', 'periods', 'countries', 'spendingPeriods', 'spendingAmount', 'spendingPeriod'));
     }
 
     public function update(UpdateProfileRequest $request, SyncUnlockedBadges $syncUnlockedBadges): RedirectResponse
@@ -33,7 +38,7 @@ class ProfileController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $user->update($request->validated());
+        $user->update($request->profileData());
 
         // Ein korrigiertes Startdatum wirkt sich direkt auf die Abzeichen aus.
         $syncUnlockedBadges->handle($user);

@@ -90,6 +90,31 @@ enum Country: string
         };
     }
 
+    /**
+     * BCP-47-Sprachcode für die Formatierung im Browser (Intl.NumberFormat).
+     */
+    public function locale(): string
+    {
+        return match ($this) {
+            self::Austria => 'de-AT',
+            self::Germany => 'de-DE',
+        };
+    }
+
+    /**
+     * Euro-Betrag in landesüblicher Schreibweise (AT: „€ 1.234,50“, DE: „1.234,50 €“).
+     * Ohne intl-Erweiterung, passend zur Ausgabe von Intl.NumberFormat im Browser.
+     */
+    public function formatEuro(float $euros, int $decimals = 2): string
+    {
+        $number = number_format($euros, $decimals, ',', '.');
+
+        return match ($this) {
+            self::Austria => "€\u{00A0}{$number}",
+            self::Germany => "{$number}\u{00A0}€",
+        };
+    }
+
     private static function telHref(string $number): string
     {
         return 'tel:'.preg_replace('/\D/', '', $number);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Country;
+use App\Enums\SpendingPeriod;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,6 +20,8 @@ use Illuminate\Support\Carbon;
  * @property string|null $trusted_contact_name
  * @property string|null $trusted_contact_phone
  * @property Country $country
+ * @property string|null $spending_cents
+ * @property SpendingPeriod|null $spending_period
  * @property Carbon|null $privacy_accepted_at
  */
 class User extends Authenticatable
@@ -39,6 +42,8 @@ class User extends Authenticatable
         'trusted_contact_name',
         'trusted_contact_phone',
         'country',
+        'spending_cents',
+        'spending_period',
         'privacy_accepted_at',
     ];
 
@@ -49,6 +54,8 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'country' => 'AT',
+        'spending_cents' => null,
+        'spending_period' => null,
     ];
 
     /**
@@ -61,6 +68,7 @@ class User extends Authenticatable
         'remember_token',
         'trusted_contact_name',
         'trusted_contact_phone',
+        'spending_cents',
     ];
 
     /**
@@ -77,6 +85,8 @@ class User extends Authenticatable
             'trusted_contact_name' => 'encrypted',
             'trusted_contact_phone' => 'encrypted',
             'country' => Country::class,
+            'spending_cents' => 'encrypted',
+            'spending_period' => SpendingPeriod::class,
             'privacy_accepted_at' => 'datetime',
         ];
     }
@@ -157,6 +167,50 @@ class User extends Authenticatable
         $seconds = $this->sobriety_start_at->diffInSeconds($now ?? now(), false);
 
         return max(0, $seconds) / 86400;
+    }
+
+    /**
+     * Frühere Ausgaben in Cent (gespeichert verschlüsselt als Text).
+     */
+    public function spendingCents(): ?int
+    {
+        if (blank($this->spending_cents) || $this->spending_period === null) {
+            return null;
+        }
+
+        $cents = (int) $this->spending_cents;
+
+        return $cents > 0 ? $cents : null;
+    }
+
+    /**
+     * Ob der Ersparnis-Rechner eingerichtet ist.
+     */
+    public function hasSpending(): bool
+    {
+        return $this->spendingCents() !== null;
+    }
+
+    /**
+     * Frühere Ausgaben umgerechnet auf einen Tag (in Cent).
+     */
+    public function dailySpendingCents(): ?float
+    {
+        $cents = $this->spendingCents();
+
+        if ($cents === null || $this->spending_period === null) {
+            return null;
+        }
+
+        return $cents / $this->spending_period->days();
+    }
+
+    /**
+     * Seit Beginn der aktuellen Serie gesparter Betrag in Euro.
+     */
+    public function savedEuros(?Carbon $now = null): float
+    {
+        return ($this->dailySpendingCents() ?? 0) * $this->cleanDays($now) / 100;
     }
 
     /**

@@ -14,16 +14,20 @@ return [
     'boolean' => ':Attribute muss wahr oder falsch sein.',
     'confirmed' => 'Die Bestätigung von :attribute stimmt nicht überein.',
     'date' => ':Attribute ist kein gültiges Datum.',
+    'decimal' => ':Attribute hat zu viele Nachkommastellen.',
     'distinct' => ':Attribute enthält einen doppelten Wert.',
     'email' => ':Attribute muss eine gültige E-Mail-Adresse sein.',
     'enum' => 'Der gewählte Wert für :attribute ist ungültig.',
     'integer' => ':Attribute muss eine ganze Zahl sein.',
+    'numeric' => ':Attribute muss eine Zahl sein.',
     'lowercase' => ':Attribute darf nur Kleinbuchstaben enthalten.',
     'max' => [
+        'numeric' => ':Attribute darf höchstens :max sein.',
         'array' => ':Attribute darf höchstens :max Einträge haben.',
         'string' => ':Attribute darf höchstens :max Zeichen lang sein.',
     ],
     'min' => [
+        'numeric' => ':Attribute muss mindestens :min sein.',
         'string' => ':Attribute muss mindestens :min Zeichen lang sein.',
     ],
     'password' => [

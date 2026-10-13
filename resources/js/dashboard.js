@@ -1,7 +1,7 @@
 /**
  * Alpine-Komponenten des CleanStart-Dashboards.
  *
- * - `dashboard`: Live-Counter, Meilensteine, Begrüßung, Notfall-Sheet, Atemübung und Craving-Timer
+ * - `dashboard`: Live-Counter, Ersparnis, Meilensteine, Begrüßung, Notfall-Sheet, Atemübung und Craving-Timer
  *                (clientseitig; nur ein überstandener Suchtdruck wird per $wire.recordCraving() gespeichert).
  * - `checkin`:   UI-Zustand des Daily Check-ins; Stimmung und Trigger sind per $wire.entangle
  *                mit der Livewire-Komponente synchronisiert und werden beim Speichern übertragen.
@@ -77,6 +77,8 @@ export function dashboard(config) {
         cravingEndsAt: null,
         cravingSaving: false,
         cravingError: false,
+        savingsPerDayCents: config.savingsPerDayCents,
+        euro: new Intl.NumberFormat(config.locale, { style: 'currency', currency: 'EUR' }),
 
         init() {
             this.restoreCraving();
@@ -118,6 +120,11 @@ export function dashboard(config) {
         },
         get counterAria() {
             return `${this.days} ${this.daysWord}, ${this.hours} Stunden und ${this.minutes} Minuten clean`;
+        },
+
+        // --- Ersparnis-Rechner -----------------------------------------------
+        get savedLabel() {
+            return this.euro.format(((this.savingsPerDayCents ?? 0) * this.fracDays) / 100);
         },
 
         // --- Meilensteine --------------------------------------------------

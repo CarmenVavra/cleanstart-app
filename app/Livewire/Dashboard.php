@@ -7,6 +7,7 @@ use App\Actions\SaveDailyCheckin;
 use App\Actions\SyncUnlockedBadges;
 use App\Enums\CopingType;
 use App\Enums\Mood;
+use App\Enums\SpendingPeriod;
 use App\Enums\Trigger;
 use App\Livewire\Forms\CheckinForm;
 use App\Models\Badge;
@@ -104,17 +105,23 @@ class Dashboard extends Component
         $strategies = $copingItems->where('type', CopingType::Strategy)->values();
 
         $cravingsOvercome = $user->cravingEpisodes()->count();
+        $savedLabel = $user->hasSpending() ? $user->country->formatEuro($user->savedEuros()) : null;
+        $savingsSummary = $this->savingsSummary($user);
         $clientConfig = [
             ...$progress->clientConfig(),
             'cravingMinutes' => CravingEpisode::TIMER_MINUTES,
             'cravingsOvercome' => $cravingsOvercome,
             'cravingStorageKey' => 'cleanstart.craving.'.$user->id,
+            'savingsPerDayCents' => $user->dailySpendingCents(),
+            'locale' => $user->country->locale(),
         ];
 
         return view('livewire.dashboard', compact(
             'user',
             'clientConfig',
             'cravingsOvercome',
+            'savedLabel',
+            'savingsSummary',
             'badges',
             'progress',
             'moods',
@@ -142,6 +149,25 @@ class Dashboard extends Component
             $hour < 18 => 'Guten Tag',
             default => 'Guten Abend',
         };
+    }
+
+    /**
+     * Erläuterung zum Ersparnis-Rechner, z. B. „Bei € 70,00 pro Woche · rund € 304 im Monat“.
+     */
+    private function savingsSummary(User $user): ?string
+    {
+        $cents = $user->spendingCents();
+        $perDay = $user->dailySpendingCents();
+
+        if ($cents === null || $perDay === null || $user->spending_period === null) {
+            return null;
+        }
+
+        $country = $user->country;
+        $perMonth = $perDay * SpendingPeriod::DAYS_PER_MONTH / 100;
+
+        return 'Bei '.$country->formatEuro($cents / 100).' '.$user->spending_period->label()
+            .' · rund '.$country->formatEuro($perMonth, 0).' im Monat';
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\Country;
+use App\Enums\SpendingPeriod;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -47,6 +48,17 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Nutzer mit eingerichtetem Ersparnis-Rechner.
+     */
+    public function withSpending(int $cents = 7000, SpendingPeriod $period = SpendingPeriod::Week): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'spending_cents' => (string) $cents,
+            'spending_period' => $period,
         ]);
     }
 

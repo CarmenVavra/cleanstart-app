@@ -63,6 +63,40 @@
             />
         </x-card>
 
+        <x-card aria-labelledby="savings-h" id="ersparnis">
+            <div class="flex flex-col gap-1">
+                <h2 id="savings-h" class="text-[19px] font-bold">Ersparnis-Rechner</h2>
+                <p class="text-[15px]/[1.45] text-ink-muted">
+                    Wie viel hast du früher ungefähr für deine Sucht ausgegeben? Auf dem Dashboard siehst du dann,
+                    wie viel du seit deinem Start gespart hast. Der Betrag wird verschlüsselt gespeichert –
+                    leer lassen blendet den Rechner aus.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <div class="min-w-36 flex-1">
+                    <x-form.input
+                        name="spending_amount"
+                        label="Betrag in Euro"
+                        hint="z. B. 12,50"
+                        :value="$spendingAmount"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        maxlength="12"
+                    />
+                </div>
+                <div class="min-w-36 flex-1">
+                    <x-form.select
+                        name="spending_period"
+                        label="Zeitraum"
+                        hint="Wie oft?"
+                        :options="$spendingPeriods"
+                        :value="$spendingPeriod"
+                    />
+                </div>
+            </div>
+        </x-card>
+
         <x-button>Profil speichern</x-button>
     </form>
 
