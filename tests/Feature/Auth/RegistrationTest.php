@@ -22,6 +22,7 @@ class RegistrationTest extends TestCase
             'password' => 'geheim1234',
             'password_confirmation' => 'geheim1234',
             'sobriety_start_at' => now()->subDays(3)->format('Y-m-d\TH:i'),
+            'country' => 'AT',
             'privacy_consent' => '1',
         ], $overrides);
     }

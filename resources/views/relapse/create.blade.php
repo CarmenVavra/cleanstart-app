@@ -7,8 +7,8 @@
             Viele Menschen brauchen mehrere Anläufe – jeder davon macht dich stärker.
         </p>
         <p class="text-[15px]/[1.45] text-ink-soft">
-            Geht es dir gerade schlecht? Die Telefonseelsorge ist rund um die Uhr da:
-            <a href="tel:08001110111" class="font-bold">0800 111 0 111</a>
+            Geht es dir gerade schlecht? Die {{ $country->hotlineName() }} ist rund um die Uhr da:
+            <a href="{{ $country->hotlineTelHref() }}" class="font-bold">{{ $country->hotlineNumber() }}</a>
         </p>
     </section>
 

@@ -44,6 +44,15 @@
                 required
             />
 
+            <x-form.select
+                name="country"
+                label="Land"
+                hint="Damit wir dir im Notfall die passenden Hilfsnummern zeigen."
+                :options="$countries"
+                :value="$defaultCountry"
+                required
+            />
+
             <div class="flex flex-col gap-1.5">
                 <label class="flex items-start gap-3 text-[15px]/[1.45]">
                     <input

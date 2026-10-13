@@ -21,8 +21,9 @@ class RelapseController extends Controller
         $now = now()->format('Y-m-d\TH:i');
         $currentStart = $user->sobriety_start_at->format('Y-m-d\TH:i');
         $currentDays = (int) floor($user->cleanDays());
+        $country = $user->country;
 
-        return view('relapse.create', compact('triggers', 'now', 'currentStart', 'currentDays'));
+        return view('relapse.create', compact('triggers', 'now', 'currentStart', 'currentDays', 'country'));
     }
 
     public function store(RelapseRequest $request, RecordRelapse $recordRelapse): RedirectResponse

@@ -33,6 +33,7 @@ class ProfileTest extends TestCase
             ->put(route('profile.update'), [
                 'username' => 'NeuerWeg',
                 'sobriety_start_at' => now()->subDays(2)->format('Y-m-d\TH:i'),
+                'country' => 'AT',
                 'trusted_contact_name' => 'Kai',
                 'trusted_contact_phone' => '+49 151 2345678',
             ])
@@ -57,6 +58,7 @@ class ProfileTest extends TestCase
             ->put(route('profile.update'), [
                 'username' => $user->username,
                 'sobriety_start_at' => now()->subDays(4)->format('Y-m-d\TH:i'),
+                'country' => 'AT',
             ])
             ->assertSessionHasNoErrors()
             ->assertRedirect(route('profile.edit'));
@@ -72,6 +74,7 @@ class ProfileTest extends TestCase
             ->put(route('profile.update'), [
                 'username' => $user->username,
                 'sobriety_start_at' => now()->subDay()->format('Y-m-d\TH:i'),
+                'country' => 'AT',
                 'trusted_contact_name' => 'Kai',
                 'trusted_contact_phone' => 'javascript:alert(1)',
             ])
@@ -81,6 +84,7 @@ class ProfileTest extends TestCase
             ->put(route('profile.update'), [
                 'username' => $user->username,
                 'sobriety_start_at' => now()->subDay()->format('Y-m-d\TH:i'),
+                'country' => 'AT',
                 'trusted_contact_name' => 'Kai',
             ])
             ->assertSessionHasErrors('trusted_contact_phone');
@@ -95,6 +99,7 @@ class ProfileTest extends TestCase
             ->put(route('profile.update'), [
                 'username' => 'Vergeben',
                 'sobriety_start_at' => now()->subDay()->format('Y-m-d\TH:i'),
+                'country' => 'AT',
             ])
             ->assertSessionHasErrors('username');
     }

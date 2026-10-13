@@ -24,6 +24,15 @@
                 :max="now()->format('Y-m-d\TH:i')"
                 required
             />
+
+            <x-form.select
+                name="country"
+                label="Land"
+                hint="Bestimmt die Hilfsnummern im Notfall-Fenster."
+                :options="$countries"
+                :value="$user->country->value"
+                required
+            />
         </x-card>
 
         <x-card aria-labelledby="contact-h">
@@ -46,7 +55,7 @@
                 name="trusted_contact_phone"
                 label="Telefonnummer"
                 type="tel"
-                hint="z. B. +49 170 1234567"
+                hint="z. B. {{ $user->country->phoneExample() }}"
                 :value="$user->trusted_contact_phone"
                 autocomplete="off"
                 inputmode="tel"

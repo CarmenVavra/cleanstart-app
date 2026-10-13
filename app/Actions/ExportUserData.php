@@ -32,6 +32,7 @@ class ExportUserData
                 'username' => $user->username,
                 'email' => $user->email,
                 'sobriety_start_at' => $user->sobriety_start_at->toIso8601String(),
+                'country' => $user->country->label(),
                 'privacy_accepted_at' => $user->privacy_accepted_at?->toIso8601String(),
                 'created_at' => $user->created_at?->toIso8601String(),
             ],

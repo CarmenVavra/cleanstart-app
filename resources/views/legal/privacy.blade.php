@@ -20,7 +20,7 @@
 
         <h2 class="text-[19px] font-bold">2. Welche Daten wir verarbeiten</h2>
         <ul class="flex list-disc flex-col gap-1.5 pl-5">
-            <li><strong>Konto:</strong> Pseudonym, E-Mail-Adresse (nur für Anmeldung und Passwort-Zurücksetzen), Passwort (nur als sicherer Hash), Zeitpunkt deiner Einwilligung.</li>
+            <li><strong>Konto:</strong> Pseudonym, E-Mail-Adresse (nur für Anmeldung und Passwort-Zurücksetzen), Passwort (nur als sicherer Hash), Land (für die passenden Hilfsnummern), Zeitpunkt deiner Einwilligung.</li>
             <li><strong>Abstinenz:</strong> Startzeitpunkt deiner aktuellen Serie, frühere Serien und – freiwillig – deine Reflexion und Trigger bei einem Neustart.</li>
             <li><strong>Daily Check-in:</strong> Stimmung (1–5), ausgewählte Trigger und optional eine persönliche Notiz.</li>
             <li><strong>Notfallplan & Vertrauensperson:</strong> deine Einträge sowie Name und Telefonnummer einer Vertrauensperson, falls du sie angibst.</li>

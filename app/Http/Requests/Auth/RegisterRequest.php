@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Enums\Country;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterRequest extends FormRequest
@@ -22,6 +24,7 @@ class RegisterRequest extends FormRequest
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::defaults()],
             'sobriety_start_at' => ['required', 'date', 'before_or_equal:now'],
+            'country' => ['required', Rule::enum(Country::class)],
             'privacy_consent' => ['accepted'],
         ];
     }
@@ -46,6 +49,7 @@ class RegisterRequest extends FormRequest
             'email' => 'E-Mail-Adresse',
             'password' => 'Passwort',
             'sobriety_start_at' => 'Clean seit',
+            'country' => 'Land',
         ];
     }
 }

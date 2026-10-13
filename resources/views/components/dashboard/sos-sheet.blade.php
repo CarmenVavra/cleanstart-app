@@ -22,11 +22,11 @@
         </div>
 
         <a
-            href="tel:08001110111"
+            href="{{ $user->country->hotlineTelHref() }}"
             class="flex min-h-[72px] flex-col justify-center gap-0.5 rounded-[18px] bg-ocean-700 px-[18px] py-3.5 text-white no-underline hover:text-white focus-visible:outline-ink"
         >
-            <span class="text-[19px] font-bold">Telefonseelsorge anrufen</span>
-            <span class="text-[15px] opacity-95">0800 111 0 111 · kostenlos, rund um die Uhr</span>
+            <span class="text-[19px] font-bold">{{ $user->country->hotlineName() }} anrufen</span>
+            <span class="text-[15px] opacity-95">{{ $user->country->hotlineNumber() }} · {{ $user->country->hotlineNote() }}</span>
         </a>
 
         @if ($user->hasTrustedContact())
@@ -111,7 +111,7 @@
 
         <p class="text-[15px]/[1.45] text-ink-muted">
             Bei akuter Gefahr für dich oder andere:
-            <a href="tel:112" class="font-bold text-sos hover:text-sos-hover">Notruf 112</a>
+            <a href="{{ $user->country->emergencyTelHref() }}" class="font-bold text-sos hover:text-sos-hover">Notruf {{ $user->country->emergencyNumber() }}</a>
         </p>
 
         <button

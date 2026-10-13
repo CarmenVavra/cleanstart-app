@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\Country;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
@@ -15,8 +16,10 @@ class RegisterController extends Controller
     public function create(): View
     {
         $defaultStart = now()->format('Y-m-d\TH:i');
+        $countries = Country::options();
+        $defaultCountry = Country::DEFAULT->value;
 
-        return view('auth.register', compact('defaultStart'));
+        return view('auth.register', compact('defaultStart', 'countries', 'defaultCountry'));
     }
 
     public function store(RegisterRequest $request): RedirectResponse

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Country;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,6 +24,7 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('users', 'username')->ignore($this->user()?->id),
             ],
             'sobriety_start_at' => ['required', 'date', 'before_or_equal:now'],
+            'country' => ['required', Rule::enum(Country::class)],
             'trusted_contact_name' => ['nullable', 'required_with:trusted_contact_phone', 'string', 'max:60'],
             'trusted_contact_phone' => [
                 'nullable', 'required_with:trusted_contact_name', 'string', 'max:30',
@@ -39,6 +41,7 @@ class UpdateProfileRequest extends FormRequest
         return [
             'username' => 'Benutzername',
             'sobriety_start_at' => 'Clean seit',
+            'country' => 'Land',
             'trusted_contact_name' => 'Name der Vertrauensperson',
             'trusted_contact_phone' => 'Telefonnummer',
         ];

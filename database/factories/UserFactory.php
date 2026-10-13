@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Country;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +34,7 @@ class UserFactory extends Factory
             'sobriety_start_at' => now()->subDays(10),
             'trusted_contact_name' => null,
             'trusted_contact_phone' => null,
+            'country' => Country::DEFAULT,
             'privacy_accepted_at' => now(),
             'remember_token' => Str::random(10),
         ];

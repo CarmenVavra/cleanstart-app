@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\DeleteAccount;
 use App\Actions\ExportUserData;
 use App\Actions\SyncUnlockedBadges;
+use App\Enums\Country;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
@@ -22,8 +23,9 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $periods = $user->sobrietyPeriods()->latest('ended_at')->get();
+        $countries = Country::options();
 
-        return view('profile.edit', compact('user', 'periods'));
+        return view('profile.edit', compact('user', 'periods', 'countries'));
     }
 
     public function update(UpdateProfileRequest $request, SyncUnlockedBadges $syncUnlockedBadges): RedirectResponse

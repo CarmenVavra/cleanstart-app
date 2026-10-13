@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Country;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $sobriety_start_at
  * @property string|null $trusted_contact_name
  * @property string|null $trusted_contact_phone
+ * @property Country $country
  * @property Carbon|null $privacy_accepted_at
  */
 class User extends Authenticatable
@@ -36,7 +38,17 @@ class User extends Authenticatable
         'sobriety_start_at',
         'trusted_contact_name',
         'trusted_contact_phone',
+        'country',
         'privacy_accepted_at',
+    ];
+
+    /**
+     * Standardwerte für neue Modelle (entspricht dem Datenbank-Default).
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'country' => 'AT',
     ];
 
     /**
@@ -64,6 +76,7 @@ class User extends Authenticatable
             'sobriety_start_at' => 'datetime',
             'trusted_contact_name' => 'encrypted',
             'trusted_contact_phone' => 'encrypted',
+            'country' => Country::class,
             'privacy_accepted_at' => 'datetime',
         ];
     }
