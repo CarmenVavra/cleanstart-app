@@ -112,6 +112,37 @@
         </a>
     </x-card>
 
+    <x-card aria-labelledby="install-h" x-data="installApp">
+        <div class="flex flex-col gap-1">
+            <h2 id="install-h" class="text-[19px] font-bold">Als App installieren</h2>
+            <p class="text-[15px]/[1.45] text-ink-muted">
+                CleanStart startet dann wie eine App vom Startbildschirm. Notrufnummern und Atemübung funktionieren
+                auch ohne Internet.
+            </p>
+        </div>
+
+        <p x-show="installed" x-cloak class="rounded-2xl bg-sage-100 px-4 py-3 text-base font-bold text-sage-900">
+            <span aria-hidden="true">✓</span> Du nutzt CleanStart bereits als App.
+        </p>
+
+        <button
+            type="button"
+            x-show="! installed && canPrompt"
+            x-cloak
+            x-on:click="install()"
+            class="flex min-h-12 items-center justify-center rounded-2xl bg-sage-900 px-5 text-base font-bold text-white"
+        >App installieren</button>
+
+        <p x-show="! installed && ! canPrompt && isIos" x-cloak class="text-[15px]/[1.45]">
+            Tippe in Safari unten auf <strong>„Teilen“</strong> und dann auf <strong>„Zum Home-Bildschirm“</strong>.
+        </p>
+
+        <p x-show="! installed && ! canPrompt && ! isIos" class="text-[15px]/[1.45]">
+            Öffne das Menü deines Browsers und wähle <strong>„App installieren“</strong> bzw.
+            <strong>„Zum Startbildschirm hinzufügen“</strong>.
+        </p>
+    </x-card>
+
     <x-card aria-labelledby="restart-h">
         <div class="flex flex-col gap-1">
             <h2 id="restart-h" class="text-[19px] font-bold">Neu starten</h2>

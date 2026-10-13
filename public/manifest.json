@@ -1,0 +1,20 @@
+{
+    "name": "CleanStart – Rückfallprävention",
+    "short_name": "CleanStart",
+    "description": "Dein Begleiter für einen cleanen Neuanfang – mit Notfall-Hilfe, Clean-Counter und täglichem Check-in.",
+    "lang": "de",
+    "dir": "ltr",
+    "id": "/",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#E9F0EE",
+    "theme_color": "#23463D",
+    "categories": ["health", "lifestyle"],
+    "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+        { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ]
+}

@@ -33,6 +33,11 @@
                 Es werden keine Marketing- oder Analyse-Cookies gesetzt.
             </li>
             <li>
+                <strong>Installierbare App &amp; Offline-Modus:</strong> Auf deinem Gerät werden nur allgemeine App-Dateien
+                (Design, Schrift, Symbole) und eine Offline-Notfallseite mit Notrufnummern zwischengespeichert –
+                keine persönlichen Daten. Du kannst sie jederzeit über die Website-Daten deines Browsers löschen.
+            </li>
+            <li>
                 <strong>Schutz vor Passwort-Raten:</strong> Fehlgeschlagene Anmeldeversuche zählen wir kurzzeitig – nur als Prüfsumme (Hash)
                 aus Benutzername und IP-Adresse, nicht im Klartext. Darüber hinaus speichert CleanStart deine IP-Adresse nicht.
             </li>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#23463D">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Offline · CleanStart</title>
+    <link rel="icon" href="/icons/favicon-32.png" type="image/png">
+    <!--
+        Offline-Notfallseite der installierbaren App (wird vom Service Worker /sw.js ausgeliefert).
+        Bewusst eigenständig: keine externen Dateien und keine persönlichen Daten.
+    -->
+    <style>
+        :root {
+            --page: #e9f0ee; --surface: #f4f7f6; --ink: #1e2b2a; --ink-muted: #4d5f5c; --ink-soft: #33504a;
+            --sage-900: #23463d; --sage-600: #3f7d6b; --sage-100: #dcebe5; --ocean-700: #2f6487; --ocean-100: #dde8f1;
+            --sos: #c2362b; --line: #cbd8d4;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; min-height: 100vh; background: var(--page); color: var(--ink);
+            font: 16px/1.45 "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+        main { max-width: 440px; margin: 0 auto; padding: 20px 20px 40px; display: flex; flex-direction: column; gap: 16px; }
+        .wordmark { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; letter-spacing: .04em; color: var(--sage-600); }
+        .wordmark::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--sage-600); }
+        h1 { margin: 0; font-size: 26px; line-height: 1.2; }
+        h2 { margin: 0; font-size: 19px; }
+        p { margin: 0; }
+        .muted { color: var(--ink-muted); font-size: 17px; }
+        .call {
+            min-height: 72px; border-radius: 18px; padding: 14px 18px; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+            text-decoration: none; background: var(--ocean-100); color: var(--ink);
+        }
+        .call strong { font-size: 19px; }
+        .call span { font-size: 15px; color: var(--ink-soft); }
+        .call--primary { background: var(--ocean-700); color: #fff; }
+        .call--primary span { color: #fff; opacity: .95; }
+        .call--sos { background: var(--sos); color: #fff; }
+        .call--sos span { color: #fff; opacity: .95; }
+        .card { background: #fff; border-radius: 24px; padding: 22px 20px; display: flex; flex-direction: column; gap: 14px; }
+        button {
+            font: inherit; min-height: 52px; border-radius: 14px; border: 2px solid var(--line); background: #fff;
+            color: var(--ink); font-size: 17px; font-weight: 700; cursor: pointer;
+        }
+        .breath-toggle { background: var(--sage-100); border-color: var(--sage-100); }
+        .breath { display: none; flex-direction: column; align-items: center; gap: 8px; padding-top: 4px; }
+        .breath.is-active { display: flex; }
+        .circle-wrap { position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+        .circle {
+            position: absolute; inset: 0; border-radius: 50%; transform: scale(.55);
+            background: radial-gradient(circle, #b9d9cd 0%, #dcebe5 70%); transition-property: transform; transition-timing-function: ease-in-out;
+        }
+        .circle-label { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--sage-900); }
+        .phase { font-size: 22px; font-weight: 700; }
+        .count { font-size: 30px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+        a:focus-visible, button:focus-visible { outline: 3px solid var(--ocean-700); outline-offset: 3px; }
+        @media (prefers-reduced-motion: reduce) { .circle { transition: none !important; } }
+    </style>
+</head>
+<body>
+<main id="main">
+    <div class="wordmark">CleanStart</div>
+
+    <div>
+        <h1>Du bist gerade offline.</h1>
+        <p class="muted">Anrufen funktioniert trotzdem – ganz normal über deinen Telefontarif.</p>
+    </div>
+
+    <a class="call call--primary" href="tel:142">
+        <strong>Telefonseelsorge Österreich</strong>
+        <span>142 · kostenlos, rund um die Uhr</span>
+    </a>
+    <a class="call" href="tel:08001110111">
+        <strong>Telefonseelsorge Deutschland</strong>
+        <span>0800 111 0 111 · kostenlos, rund um die Uhr</span>
+    </a>
+    <a class="call call--sos" href="tel:112">
+        <strong>Notruf 112</strong>
+        <span>Bei akuter Gefahr für dich oder andere</span>
+    </a>
+
+    <section class="card" aria-labelledby="breath-h">
+        <h2 id="breath-h">Atemübung 4-7-8</h2>
+        <p class="muted">4 s einatmen – 7 s halten – 8 s ausatmen.</p>
+        <button type="button" class="breath-toggle" id="breath-toggle" aria-expanded="false" aria-controls="breath">Atemübung starten</button>
+        <div class="breath" id="breath">
+            <div class="circle-wrap">
+                <div class="circle" id="circle" aria-hidden="true"></div>
+                <div class="circle-label">
+                    <span class="phase" id="phase" aria-live="polite"></span>
+                    <span class="count" id="count" aria-hidden="true"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <p class="muted" style="font-size: 15px">
+        Dein persönlicher Notfallplan und deine Vertrauensperson werden aus Datenschutzgründen nicht auf diesem Gerät
+        gespeichert und sind wieder sichtbar, sobald du online bist.
+    </p>
+
+    <button type="button" onclick="location.reload()">Erneut versuchen</button>
+</main>
+
+<script>
+    // 4-7-8-Atmung wie im Notfall-Fenster der App (resources/js/dashboard.js)
+    (function () {
+        var phases = [
+            { label: 'Einatmen …', seconds: 4, scale: 1 },
+            { label: 'Halten …', seconds: 7, scale: 1 },
+            { label: 'Ausatmen …', seconds: 8, scale: 0.55 },
+        ];
+        var toggle = document.getElementById('breath-toggle');
+        var area = document.getElementById('breath');
+        var circle = document.getElementById('circle');
+        var phaseEl = document.getElementById('phase');
+        var countEl = document.getElementById('count');
+        var timer = null, index = 0, remaining = 0;
+
+        function enter(i) {
+            index = i;
+            remaining = phases[i].seconds;
+            phaseEl.textContent = phases[i].label;
+            countEl.textContent = remaining;
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    circle.style.transitionDuration = phases[i].seconds + 's';
+                    circle.style.transform = 'scale(' + phases[i].scale + ')';
+                });
+            });
+        }
+
+        function stop() {
+            clearInterval(timer);
+            timer = null;
+            area.classList.remove('is-active');
+            circle.style.transitionDuration = '0s';
+            circle.style.transform = 'scale(.55)';
+            toggle.textContent = 'Atemübung starten';
+            toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        toggle.addEventListener('click', function () {
+            if (timer) { stop(); return; }
+            area.classList.add('is-active');
+            toggle.textContent = 'Atemübung beenden';
+            toggle.setAttribute('aria-expanded', 'true');
+            enter(0);
+            timer = setInterval(function () {
+                remaining -= 1;
+                if (remaining <= 0) { enter((index + 1) % phases.length); } else { countEl.textContent = remaining; }
+            }, 1000);
+        });
+    })();
+</script>
+</body>
+</html>
