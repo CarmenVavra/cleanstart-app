@@ -7,7 +7,7 @@
  * Ohne Netz zeigt die App stattdessen /offline.html mit Notrufnummern und Atemübung.
  */
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC_CACHE = `cleanstart-static-${VERSION}`;
 const ASSET_CACHE = `cleanstart-assets-${VERSION}`;
 const MAX_ASSETS = 40;
@@ -15,11 +15,11 @@ const MAX_ASSETS = 40;
 const PRECACHE = [
     '/offline.html',
     '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png',
-    '/icons/icon-maskable-512.png',
-    '/icons/apple-touch-icon.png',
-    '/icons/favicon-32.png',
+    '/app-icons/icon-192.png',
+    '/app-icons/icon-512.png',
+    '/app-icons/icon-maskable-512.png',
+    '/app-icons/apple-touch-icon.png',
+    '/app-icons/favicon-32.png',
 ];
 
 self.addEventListener('install', (event) => {

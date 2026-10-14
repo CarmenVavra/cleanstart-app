@@ -15,7 +15,7 @@
     {{-- Installierbare App (PWA): Manifest, Icons; Service Worker wird in resources/js/app.js registriert --}}
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/favicon.ico" sizes="32x32">
-    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="/app-icons/apple-touch-icon.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="CleanStart">

@@ -45,7 +45,7 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 - **8 Meilenstein-Badges** (24 h … 1 Jahr) – werden in `badge_user` mit Erreichungszeitpunkt gespeichert; nach einem Neustart (Rückfall) neu berechnet.
 - **Daily Check-in**: Stimmung 1–5, Trigger-Tags, optionale Notiz (verschlüsselt) – ein Check-in pro Tag, nachträglich bearbeitbar.
 - **Stimmungsverlauf** (`/verlauf`, 7/30/90 Tage): Balkendiagramm (serverseitiges SVG, mit Tabelle als Textalternative), Ø-Stimmung, häufigste Trigger mit Ø-Stimmung, Stimmung nach Wochentag, Neustarts als Markierung und behutsame Hinweise auf Muster (ab 5 Check-ins). Notizen werden dort nicht geladen. Lokal füllt `DemoCheckinSeeder` vier Wochen Beispieldaten für „Alex“.
-- **Installierbare App (PWA)**: `public/manifest.json`, Icons in `public/icons/`, Service Worker `public/sw.js`. Ohne Netz erscheint `public/offline.html` mit Telefonseelsorge AT/DE, Notruf 112 und 4-7-8-Atemübung. Zwischengespeichert werden nur öffentliche Dateien (Build, Icons), nie Seiten mit persönlichen Daten. Im Profil gibt es eine Karte „Als App installieren“. Am Handy funktioniert die Installation nur über HTTPS.
+- **Installierbare App (PWA)**: `public/manifest.json`, Icons in `public/app-icons/`, Service Worker `public/sw.js`. Ohne Netz erscheint `public/offline.html` mit Telefonseelsorge AT/DE, Notruf 112 und 4-7-8-Atemübung. Zwischengespeichert werden nur öffentliche Dateien (Build, Icons), nie Seiten mit persönlichen Daten. Im Profil gibt es eine Karte „Als App installieren“. Am Handy funktioniert die Installation nur über HTTPS.
 - **Anonyme Registrierung** mit Pseudonym und ausdrücklicher Einwilligung (Art. 9 DSGVO, Zeitpunkt wird gespeichert); Login per Benutzername (Rate-Limit: 5 Versuche).
 - **Passwort vergessen**: Reset-Link per E-Mail; die Antwort verrät nicht, ob eine Adresse registriert ist.
 - **Profil**: Pseudonym, Startdatum (nur zur Korrektur), Land (Österreich voreingestellt oder Deutschland – bestimmt die Hilfsnummern), Vertrauensperson (Name & Nummer verschlüsselt gespeichert).
@@ -53,6 +53,17 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 - **Mein Notfallplan** (`/notfallplan`): „Mein Warum“ und „Was mir hilft“ (je max. 10, verschlüsselt) – wird direkt im Notfall-Sheet angezeigt.
 - **Datenexport** (Art. 20 DSGVO) als JSON und **Konto löschen** (Art. 17 DSGVO, mit Passwort-Bestätigung) im Profil.
 - **Impressum & Datenschutzerklärung** (`/impressum`, `/datenschutz`), öffentlich erreichbar und überall verlinkt.
+
+## Live-Betrieb (netcup / Plesk)
+
+- URL: https://cleanstart.caryssa.at
+- Server-Ordner: `~/cleanstart.caryssa.at/app` (Dokumentstamm in Plesk: `cleanstart.caryssa.at/app/public`), Composer unter `~/cleanstart.caryssa.at/bin/composer.phar`
+- Der Server holt den Code direkt von GitHub; die Design-Dateien (`public/build`) werden lokal gebaut und hochgeladen.
+- **Aktualisieren:** Änderungen committen, dann `deploy.bat` (Doppelklick). Das Skript testet, pusht zu GitHub, aktualisiert den Server im kurzen Wartungsmodus und lädt die Design-Dateien hoch.
+- SSH-Zugang per Schlüssel `%USERPROFILE%\.ssh\cleanstart_netcup` (Benutzer `hosting171221`).
+- ⚠️ Per SSH **kein** `config:cache`, `optimize` oder `view:cache` ausführen: SSH läuft in einer isolierten Umgebung (`/cleanstart.caryssa.at/app`), der Webserver unter `/var/www/vhosts/…/cleanstart.caryssa.at/app` – zwischengespeicherte Pfade führen zu Fehler 500.
+- Der Pfad `/icons/` ist bei Apache reserviert; App-Icons liegen deshalb unter `public/app-icons/`.
+- Die Server-`.env` (inkl. `APP_KEY`) liegt nur auf dem Server – unbedingt eine Sicherungskopie aufbewahren.
 
 ## Vor dem Go-live
 

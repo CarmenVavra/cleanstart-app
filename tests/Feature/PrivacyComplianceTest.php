@@ -109,6 +109,9 @@ class PrivacyComplianceTest extends TestCase
 
     public function test_privacy_policy_describes_cookies_retention_and_processors(): void
     {
+        // Unabhängig von der lokalen .env: fehlende Angaben erscheinen als Platzhalter.
+        config(['legal.backup_retention_days' => null, 'legal.mail_provider' => null]);
+
         $this->get(route('legal.privacy'))
             ->assertStatus(200)
             ->assertSee('nur zum Zurücksetzen deines Passworts')

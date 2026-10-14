@@ -59,9 +59,9 @@ class PwaTest extends TestCase
     {
         $this->get(route('login'))
             ->assertSee('<link rel="manifest" href="/manifest.json">', false)
-            ->assertSee('<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">', false);
+            ->assertSee('<link rel="apple-touch-icon" href="/app-icons/apple-touch-icon.png">', false);
 
-        $this->assertFileExists(public_path('icons/apple-touch-icon.png'));
+        $this->assertFileExists(public_path('app-icons/apple-touch-icon.png'));
         $this->assertSame("\x00\x00\x01\x00", substr((string) file_get_contents(public_path('favicon.ico')), 0, 4));
     }
 
@@ -79,6 +79,17 @@ class PwaTest extends TestCase
         $sw = (string) file_get_contents(public_path('sw.js'));
         $this->assertStringContainsString("request.mode === 'navigate'", $sw);
         $this->assertStringContainsString("caches.match('/offline.html')", $sw);
+    }
+
+    public function test_no_public_file_uses_the_apache_icons_alias(): void
+    {
+        // Apache leitet /icons/ standardmäßig auf eigene Symbole um (bei netcup/Plesk aktiv) – Dateien dort wären nicht erreichbar.
+        $this->assertDirectoryDoesNotExist(public_path('icons'));
+
+        foreach (['manifest.json', 'sw.js', 'offline.html'] as $file) {
+            $this->assertStringNotContainsString('"/icons/', (string) file_get_contents(public_path($file)), $file);
+            $this->assertStringNotContainsString("'/icons/", (string) file_get_contents(public_path($file)), $file);
+        }
     }
 
     public function test_offline_page_offers_emergency_numbers_without_external_resources(): void
