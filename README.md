@@ -1,23 +1,3 @@
-# Profi-Tipp für Laravel-Entwickler: "Laravel Boost MCP"
-
-Um Claude Code noch mächtiger im Umgang mit Ihrer Datenbank zu machen, empfiehlt sich die Installation des Open-Source-Pakets `laravel/boost` via Composer im Projekt:
-
-```bash
-composer require laravel/boost --dev
-```
-
-## Dieses Paket registriert sich als sogenannter Model Context Protocol (MCP) Server. Dadurch kann Claude Code direkt mit den Internals Ihrer Laravel-App interagieren. Claude kann dann
-
-- Live Ihre echte lokale Datenbank-Struktur abfragen (ohne die Dateien lesen zu müssen).
-- Artisan Tinker-Befehle im Hintergrund ausführen, um Daten direkt zu prüfen.
-
-## Server start and stop script
-
-- Mach im Projektordner eine start.bat, um den Server zu starten
-- Mach im Projektordner eine stop.bat, um den Server zu soppen
-
----
-
 # CleanStart – Projektanleitung
 
 Mobile-first Web-App zur Rückfallprävention (Laravel 12 · Livewire 3 · Alpine.js · Tailwind CSS 4 · SQLite).
@@ -65,14 +45,29 @@ Umgesetzt nach `Konzept.pdf` und dem Design-Handoff in `UI_MOCKUPS/design_handof
 - Der Pfad `/icons/` ist bei Apache reserviert; App-Icons liegen deshalb unter `public/app-icons/`.
 - Die Server-`.env` (inkl. `APP_KEY`) liegt nur auf dem Server – unbedingt eine Sicherungskopie aufbewahren.
 
-## Vor dem Go-live
+## Einrichtung auf einem neuen Server
 
-- `LEGAL_*`-Werte in der `.env` ausfüllen (Betreiber, Adresse, E-Mail, Hoster, Aufsichtsbehörde). Fehlende Angaben erscheinen auf den Seiten als roter Platzhalter. Die Texte sind eine Vorlage und sollten rechtlich geprüft werden.
-- `MAIL_*` auf einen echten SMTP-Server umstellen; lokal landen Reset-Mails im Log (`storage/logs/laravel.log`). Den Versanddienst in `LEGAL_MAIL_PROVIDER` eintragen, die Backup-Dauer des Hosters in `LEGAL_BACKUP_RETENTION_DAYS`.
-- Cronjob für den Scheduler einrichten: `* * * * * php artisan schedule:run` – er startet stündlich `cleanstart:prune` (löscht abgelaufene Sitzungen, Login-Zähler und Passwort-Links, wie in der Datenschutzerklärung zugesagt).
-- `SESSION_SECURE_COOKIE=true`, `LOG_LEVEL=error` und HTTPS-Weiterleitung auf dem Server setzen.
+Auf netcup ist das alles erledigt. Die Liste gilt nur, falls die App einmal umzieht:
 
-### Datenschutz im Code
+- `.env` mit `APP_ENV=production`, `APP_DEBUG=false`, eigenem `APP_KEY`, `SESSION_SECURE_COOKIE=true` und `LOG_LEVEL=error`.
+- `LEGAL_*`-Werte ausfüllen (Betreiber, Adresse, E-Mail, Hoster, Aufsichtsbehörde, `LEGAL_MAIL_PROVIDER`, `LEGAL_BACKUP_RETENTION_DAYS`). Fehlende Angaben erscheinen auf den Seiten als roter Platzhalter. Die Texte sind eine Vorlage und sollten rechtlich geprüft werden.
+- `MAIL_*` auf einen echten SMTP-Server stellen (nie `MAIL_MAILER=log`); lokal landen Reset-Mails in `storage/logs/laravel.log`.
+- Cronjob für den Scheduler: `* * * * * php artisan schedule:run`. Er startet stündlich `cleanstart:prune` (löscht abgelaufene Sitzungen, Login-Zähler und Passwort-Links, wie in der Datenschutzerklärung zugesagt).
+- HTTPS-Zertifikat und Weiterleitung von HTTP auf HTTPS einrichten.
+
+## Sicherheit
+
+`app/Http/Middleware/SecurityHeaders.php` setzt für jede Antwort Sicherheits-Header (geprüft in `tests/Feature/SecurityHeadersTest.php`):
+
+- `Strict-Transport-Security` (nur über HTTPS): Der Browser verwendet ein Jahr lang ausschließlich HTTPS.
+- `X-Frame-Options: DENY` und `frame-ancestors 'none'`: Keine fremde Seite darf CleanStart einbetten.
+- `Referrer-Policy: same-origin`: Externe Seiten erfahren nicht, dass jemand von CleanStart kommt.
+- `X-Content-Type-Options`, `Permissions-Policy` (keine Kamera, kein Mikrofon, kein Standort) und `Cross-Origin-Opener-Policy`.
+- Angemeldete Seiten werden mit `Cache-Control: no-store` nicht im Browser-Cache abgelegt (wichtig bei geteilten Geräten).
+
+Die Content-Security-Policy schränkt Skripte bewusst nicht ein: Alpine.js und Livewire brauchen dynamisch erzeugten Code.
+
+## Datenschutz im Code
 
 - Sitzungen werden ohne IP-Adresse und User-Agent gespeichert (`app/Session/PrivacyDatabaseSessionHandler.php`).
 - Login-Versuche werden nur unter einem SHA-256-Hash aus Benutzername und IP gezählt.
