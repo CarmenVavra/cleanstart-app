@@ -7,7 +7,7 @@ cd /d "%~dp0"
 
 set PORT=8900
 
-netstat -ano | findstr /R /C:":%PORT% .*LISTENING" >nul
+netstat -ano | findstr /R /C:":%PORT%  *0\.0\.0\.0:0 " /C:":%PORT%  *\[::\]:0 " >nul
 if %errorlevel%==0 (
     echo CleanStart laeuft bereits auf http://127.0.0.1:%PORT%
     start "" "http://127.0.0.1:%PORT%"

@@ -10,7 +10,7 @@ REM Fenster von start.bat (php artisan serve) schliessen
 taskkill /FI "WINDOWTITLE eq CleanStart Server*" /T /F >nul 2>&1 && set FOUND=1
 
 REM Alle verbleibenden Prozesse beenden, die auf dem Port lauschen
-for /f "tokens=5" %%p in ('netstat -ano ^| findstr /R /C:":%PORT% .*LISTENING"') do (
+for /f "tokens=5" %%p in ('netstat -ano ^| findstr /R /C:":%PORT%  *0\.0\.0\.0:0 " /C:":%PORT%  *\[::\]:0 "') do (
     taskkill /PID %%p /T /F >nul 2>&1 && set FOUND=1
 )
 
